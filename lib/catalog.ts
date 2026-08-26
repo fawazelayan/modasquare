@@ -1,0 +1,1256 @@
+/**
+ * Static catalogue for the MODASQUARE prototype.
+ *
+ * The brief is structure, hierarchy and flow, so there is no network layer here.
+ * Everything is typed and colocated, which keeps the pages Server Components and
+ * keeps the client bundle to interaction code only.
+ */
+
+export type AspectRatio = "3:4" | "4:5" | "16:9" | "1:1" | "9:16";
+
+export type CategorySlug = "women" | "men" | "teen";
+
+export type SizeLabel = "XS" | "S" | "M" | "L" | "XL" | "XXL";
+
+export type FitLabel = "Oversized" | "Relaxed" | "Tailored" | "Cropped";
+
+export type PriceBandId = "band-1" | "band-2" | "band-3" | "band-4";
+
+export interface SizeOption {
+  readonly label: SizeLabel;
+  readonly inStock: boolean;
+}
+
+export interface Frame {
+  /** Minimalist wireframe caption. Kept to one or two words. */
+  readonly label: string;
+  readonly ratio: AspectRatio;
+}
+
+export interface SpecPanel {
+  readonly id: string;
+  readonly title: string;
+  readonly rows: ReadonlyArray<{ readonly term: string; readonly value: string }>;
+}
+
+export interface Product {
+  readonly slug: string;
+  readonly name: string;
+  /** Collection line shown as metadata under the product name. */
+  readonly line: string;
+  readonly category: CategorySlug;
+  /** Minor units, EUR. Formatted through Intl at render time. */
+  readonly price: number;
+  readonly colour: string;
+  readonly fabric: string;
+  readonly fit: FitLabel;
+  readonly sizes: ReadonlyArray<SizeOption>;
+  /** Primary card ratio. Portrait only, per DESIGN.md product tile rules. */
+  readonly ratio: Extract<AspectRatio, "3:4" | "4:5">;
+  readonly gallery: ReadonlyArray<Frame>;
+  readonly summary: string;
+  readonly specs: ReadonlyArray<SpecPanel>;
+  /** Slugs rendered by the Complete the Look module on the PDP. */
+  readonly pairsWith: ReadonlyArray<string>;
+  readonly isNew?: boolean;
+}
+
+export interface Category {
+  readonly slug: CategorySlug;
+  readonly label: string;
+  readonly headline: string;
+  readonly note: string;
+}
+
+export const CATEGORIES: ReadonlyArray<Category> = [
+  {
+    slug: "women",
+    label: "Women",
+    headline: "Women",
+    note: "Structured outerwear, column tailoring and heavyweight jersey cut for volume.",
+  },
+  {
+    slug: "men",
+    label: "Men",
+    headline: "Men",
+    note: "Utility layers, pleated trousers and loomstate denim built to hold their shape.",
+  },
+  {
+    slug: "teen",
+    label: "Teen",
+    headline: "Teen",
+    note: "Lighter constructions, wider silhouettes and technical nylon in the same palette.",
+  },
+];
+
+export const SIZE_ORDER: ReadonlyArray<SizeLabel> = ["XS", "S", "M", "L", "XL", "XXL"];
+
+export const FIT_OPTIONS: ReadonlyArray<FitLabel> = ["Oversized", "Relaxed", "Tailored", "Cropped"];
+
+export interface PriceBand {
+  readonly id: PriceBandId;
+  readonly label: string;
+  readonly min: number;
+  readonly max: number;
+}
+
+export const PRICE_BANDS: ReadonlyArray<PriceBand> = [
+  { id: "band-1", label: "Under 200", min: 0, max: 199 },
+  { id: "band-2", label: "200 to 400", min: 200, max: 399 },
+  { id: "band-3", label: "400 to 800", min: 400, max: 799 },
+  { id: "band-4", label: "800 and above", min: 800, max: Number.POSITIVE_INFINITY },
+];
+
+/** Free-shipping threshold used by the cart drawer tracker. */
+export const FREE_SHIPPING_THRESHOLD: number = 350;
+
+const allSizes = (stocked: ReadonlyArray<SizeLabel>, offered: ReadonlyArray<SizeLabel>): SizeOption[] =>
+  offered.map((label) => ({ label, inStock: stocked.includes(label) }));
+
+const APPAREL: ReadonlyArray<SizeLabel> = ["XS", "S", "M", "L", "XL"];
+const APPAREL_WIDE: ReadonlyArray<SizeLabel> = ["XS", "S", "M", "L", "XL", "XXL"];
+
+const careRows = (fabric: string, origin: string) => [
+  { term: "Composition", value: fabric },
+  { term: "Care", value: "Cold wash, reshape flat, warm iron on the reverse" },
+  { term: "Made in", value: origin },
+];
+
+export const PRODUCTS: ReadonlyArray<Product> = [
+  /* ------------------------------------------------------------------ Women */
+  {
+    slug: "anvers-cropped-bomber",
+    name: "Anvers Cropped Bomber",
+    line: "Atelier Series 04",
+    category: "women",
+    price: 690,
+    colour: "Bone",
+    fabric: "Bonded cotton canvas",
+    fit: "Cropped",
+    sizes: allSizes(["XS", "S", "M", "XL"], APPAREL),
+    ratio: "3:4",
+    gallery: [
+      { label: "Front", ratio: "3:4" },
+      { label: "Back", ratio: "3:4" },
+      { label: "Collar detail", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A short bomber cut with a raised collar and a dropped shoulder. The canvas is bonded so the body holds a clean line away from the waist.",
+    specs: [
+      {
+        id: "materials",
+        title: "Materials and care",
+        rows: careRows("62% cotton, 38% recycled polyamide bonding", "Portugal"),
+      },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Cropped through the body, dropped shoulder" },
+          { term: "Model", value: "1.78 m, wearing S" },
+          { term: "Length", value: "52 cm at centre back, size S" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["sablon-wool-trouser", "aster-ribbed-tank", "petra-denim-column-skirt"],
+    isNew: true,
+  },
+  {
+    slug: "sablon-wool-trouser",
+    name: "Sablon Wool Trouser",
+    line: "Atelier Series 04",
+    category: "women",
+    price: 420,
+    colour: "Charcoal",
+    fabric: "Italian wool flannel",
+    fit: "Tailored",
+    sizes: allSizes(["XS", "S", "M", "L", "XL"], APPAREL),
+    ratio: "3:4",
+    gallery: [
+      { label: "Front", ratio: "3:4" },
+      { label: "Side", ratio: "3:4" },
+      { label: "Waistband", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A single-pleat trouser in a dry flannel. The leg falls straight from a high waistband with no taper below the knee.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% virgin wool", "Italy") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "High rise, straight leg, single pleat" },
+          { term: "Model", value: "1.78 m, wearing S" },
+          { term: "Inseam", value: "78 cm, size S" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["anvers-cropped-bomber", "meridian-boxy-knit", "nord-quilted-liner"],
+  },
+  {
+    slug: "meridian-boxy-knit",
+    name: "Meridian Boxy Knit",
+    line: "Core Atelier",
+    category: "women",
+    price: 285,
+    colour: "Ash Olive",
+    fabric: "Compact merino",
+    fit: "Oversized",
+    sizes: allSizes(["S", "M", "L"], APPAREL),
+    ratio: "4:5",
+    gallery: [
+      { label: "Front", ratio: "4:5" },
+      { label: "Sleeve", ratio: "4:5" },
+      { label: "Rib detail", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A square-bodied crew knitted in compact merino, so the shoulder stays flat and the hem holds without a heavy rib.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% extra-fine merino wool", "Scotland") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Boxy, wide through the chest" },
+          { term: "Model", value: "1.75 m, wearing M" },
+          { term: "Length", value: "58 cm at centre back, size M" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["sablon-wool-trouser", "petra-denim-column-skirt", "halden-cargo-trouser"],
+  },
+  {
+    slug: "kessel-zip-hoodie",
+    name: "Kessel Zip Hoodie",
+    line: "Heavy Jersey",
+    category: "women",
+    price: 245,
+    colour: "Fog",
+    fabric: "Japanese loopback cotton",
+    fit: "Relaxed",
+    sizes: allSizes(["XS", "S", "L", "XL"], APPAREL),
+    ratio: "3:4",
+    gallery: [
+      { label: "Front", ratio: "3:4" },
+      { label: "Hood", ratio: "3:4" },
+      { label: "Cuff", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A 480 gsm loopback hoodie with a two-panel hood and a metal zip that runs to the chin.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% organic cotton, 480 gsm", "Japan") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Relaxed, straight through the body" },
+          { term: "Model", value: "1.75 m, wearing S" },
+          { term: "Length", value: "64 cm at centre back, size S" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["halden-cargo-trouser", "aster-ribbed-tank", "meridian-boxy-knit"],
+  },
+  {
+    slug: "petra-denim-column-skirt",
+    name: "Petra Denim Column Skirt",
+    line: "Atelier Series 04",
+    category: "women",
+    price: 310,
+    colour: "Raw Indigo",
+    fabric: "Japanese selvedge denim",
+    fit: "Tailored",
+    sizes: allSizes(["XS", "S", "M", "L"], APPAREL),
+    ratio: "3:4",
+    gallery: [
+      { label: "Front", ratio: "3:4" },
+      { label: "Back", ratio: "3:4" },
+      { label: "Hem", ratio: "1:1" },
+      { label: "Selvedge", ratio: "1:1" },
+    ],
+    summary:
+      "A floor-skimming column in loomstate denim. The side seam is left unwashed so the skirt breaks in against the wearer.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% cotton selvedge denim, 13.5 oz", "Japan") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Straight column, high waist" },
+          { term: "Model", value: "1.78 m, wearing S" },
+          { term: "Length", value: "96 cm, size S" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["meridian-boxy-knit", "anvers-cropped-bomber", "nord-quilted-liner"],
+    isNew: true,
+  },
+  {
+    slug: "nord-quilted-liner",
+    name: "Nord Quilted Liner",
+    line: "Outer Atelier",
+    category: "women",
+    price: 880,
+    colour: "Slate",
+    fabric: "Recycled ripstop with wool wadding",
+    fit: "Oversized",
+    sizes: allSizes(["S", "M", "L", "XL"], APPAREL),
+    ratio: "4:5",
+    gallery: [
+      { label: "Front", ratio: "4:5" },
+      { label: "Open", ratio: "4:5" },
+      { label: "Quilting", ratio: "1:1" },
+      { label: "Lining", ratio: "1:1" },
+    ],
+    summary:
+      "A long quilted liner that wears as an outer layer. Wool wadding keeps the weight down without collapsing the channel lines.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("Shell 100% recycled polyamide, wadding 70% wool", "Portugal") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Oversized, falls below the knee" },
+          { term: "Model", value: "1.78 m, wearing S" },
+          { term: "Length", value: "112 cm at centre back, size S" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["sablon-wool-trouser", "meridian-boxy-knit", "kessel-zip-hoodie"],
+  },
+  {
+    slug: "aster-ribbed-tank",
+    name: "Aster Ribbed Tank",
+    line: "Core Atelier",
+    category: "women",
+    price: 130,
+    colour: "Bone",
+    fabric: "Mercerised cotton rib",
+    fit: "Cropped",
+    sizes: allSizes(["XS", "S", "M", "L", "XL"], APPAREL),
+    ratio: "4:5",
+    gallery: [
+      { label: "Front", ratio: "4:5" },
+      { label: "Back", ratio: "4:5" },
+      { label: "Neckline", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A narrow rib tank with a bound neckline. Mercerised so the surface stays even after repeated washing.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("95% mercerised cotton, 5% elastane", "Portugal") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Close, cropped at the hip bone" },
+          { term: "Model", value: "1.75 m, wearing S" },
+          { term: "Length", value: "44 cm at centre back, size S" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["halden-cargo-trouser", "anvers-cropped-bomber", "sablon-wool-trouser"],
+  },
+  {
+    slug: "halden-cargo-trouser",
+    name: "Halden Cargo Trouser",
+    line: "Utility Atelier",
+    category: "women",
+    price: 365,
+    colour: "Ash Olive",
+    fabric: "Cotton ventile",
+    fit: "Relaxed",
+    sizes: allSizes(["XS", "M", "L", "XL"], APPAREL),
+    ratio: "3:4",
+    gallery: [
+      { label: "Front", ratio: "3:4" },
+      { label: "Pocket", ratio: "3:4" },
+      { label: "Hem cinch", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A wide cargo in tightly woven ventile, with bellows pockets set back on the thigh so the leg line stays clean from the front.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% long-staple cotton ventile", "Portugal") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Mid rise, wide leg, cinched hem" },
+          { term: "Model", value: "1.78 m, wearing S" },
+          { term: "Inseam", value: "76 cm, size S" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["kessel-zip-hoodie", "aster-ribbed-tank", "meridian-boxy-knit"],
+  },
+  {
+    slug: "lumen-sheer-layer-top",
+    name: "Lumen Sheer Layer Top",
+    line: "Atelier Series 04",
+    category: "women",
+    price: 195,
+    colour: "Smoke",
+    fabric: "Silk-blend georgette",
+    fit: "Relaxed",
+    sizes: allSizes(["XS", "S", "M"], APPAREL),
+    ratio: "4:5",
+    gallery: [
+      { label: "Front", ratio: "4:5" },
+      { label: "Layered", ratio: "4:5" },
+      { label: "Seam", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A long-sleeved georgette layer with French seams throughout, cut to sit over a tank without adding bulk at the shoulder.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("62% silk, 38% viscose", "Italy") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Relaxed, semi-sheer" },
+          { term: "Model", value: "1.75 m, wearing XS" },
+          { term: "Length", value: "60 cm at centre back, size XS" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["sablon-wool-trouser", "petra-denim-column-skirt", "aster-ribbed-tank"],
+  },
+  {
+    slug: "vestry-poplin-overshirt",
+    name: "Vestry Poplin Overshirt",
+    line: "Core Atelier",
+    category: "women",
+    price: 260,
+    colour: "Chalk",
+    fabric: "Compact cotton poplin",
+    fit: "Oversized",
+    sizes: allSizes(["S", "M", "L", "XL"], APPAREL),
+    ratio: "3:4",
+    gallery: [
+      { label: "Front", ratio: "3:4" },
+      { label: "Open", ratio: "3:4" },
+      { label: "Placket", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A shirt cut to overshirt proportions, with a hidden placket and a squared hem that reads as a jacket when left open.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% compact cotton poplin", "Portugal") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Oversized, dropped shoulder" },
+          { term: "Model", value: "1.75 m, wearing S" },
+          { term: "Length", value: "76 cm at centre back, size S" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["halden-cargo-trouser", "aster-ribbed-tank", "sablon-wool-trouser"],
+  },
+
+  /* -------------------------------------------------------------------- Men */
+  {
+    slug: "halden-utility-overshirt",
+    name: "Halden Utility Overshirt",
+    line: "Utility Atelier",
+    category: "men",
+    price: 395,
+    colour: "Ash Olive",
+    fabric: "Cotton ventile",
+    fit: "Relaxed",
+    sizes: allSizes(["S", "M", "L", "XXL"], APPAREL_WIDE),
+    ratio: "3:4",
+    gallery: [
+      { label: "Front", ratio: "3:4" },
+      { label: "Back", ratio: "3:4" },
+      { label: "Pocket", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A square overshirt in ventile with two chest pockets set wide. Heavy enough to wear as the outer layer into autumn.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% long-staple cotton ventile", "Portugal") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Relaxed, squared hem" },
+          { term: "Model", value: "1.86 m, wearing M" },
+          { term: "Length", value: "74 cm at centre back, size M" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["corso-pleated-trouser", "rundle-boxy-tee", "ardent-selvedge-denim"],
+    isNew: true,
+  },
+  {
+    slug: "brix-heavyweight-hoodie",
+    name: "Brix Heavyweight Hoodie",
+    line: "Heavy Jersey",
+    category: "men",
+    price: 265,
+    colour: "Charcoal",
+    fabric: "Japanese loopback cotton",
+    fit: "Oversized",
+    sizes: allSizes(["S", "M", "L", "XL", "XXL"], APPAREL_WIDE),
+    ratio: "3:4",
+    gallery: [
+      { label: "Front", ratio: "3:4" },
+      { label: "Hood", ratio: "3:4" },
+      { label: "Cuff", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A 520 gsm hoodie with a three-panel hood and a flat drawcord. The body is cut wide and stops at the hip.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% organic cotton, 520 gsm", "Japan") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Oversized, dropped shoulder" },
+          { term: "Model", value: "1.86 m, wearing M" },
+          { term: "Length", value: "70 cm at centre back, size M" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["slate-track-pant", "rundle-boxy-tee", "fenwick-nylon-anorak"],
+  },
+  {
+    slug: "corso-pleated-trouser",
+    name: "Corso Pleated Trouser",
+    line: "Atelier Series 04",
+    category: "men",
+    price: 445,
+    colour: "Slate",
+    fabric: "Italian wool flannel",
+    fit: "Tailored",
+    sizes: allSizes(["S", "M", "L", "XL"], APPAREL_WIDE),
+    ratio: "3:4",
+    gallery: [
+      { label: "Front", ratio: "3:4" },
+      { label: "Side", ratio: "3:4" },
+      { label: "Pleat", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A double-pleat trouser with a wide waistband and a half-inch cuff. The flannel is milled dry so the crease holds.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% virgin wool flannel", "Italy") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "High rise, double pleat, cuffed" },
+          { term: "Model", value: "1.86 m, wearing M" },
+          { term: "Inseam", value: "82 cm, size M" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["halden-utility-overshirt", "marlow-cable-crew", "rundle-boxy-tee"],
+  },
+  {
+    slug: "rundle-boxy-tee",
+    name: "Rundle Boxy Tee",
+    line: "Core Atelier",
+    category: "men",
+    price: 115,
+    colour: "Bone",
+    fabric: "Tubular cotton jersey",
+    fit: "Oversized",
+    sizes: allSizes(["S", "M", "L", "XL", "XXL"], APPAREL_WIDE),
+    ratio: "4:5",
+    gallery: [
+      { label: "Front", ratio: "4:5" },
+      { label: "Back", ratio: "4:5" },
+      { label: "Collar", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A tubular-knit tee with no side seams, so the body stays square through the wash. Ribbed collar set by hand.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% organic cotton, 240 gsm", "Portugal") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Boxy, wide sleeve" },
+          { term: "Model", value: "1.86 m, wearing M" },
+          { term: "Length", value: "70 cm at centre back, size M" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["ardent-selvedge-denim", "halden-utility-overshirt", "brix-heavyweight-hoodie"],
+  },
+  {
+    slug: "fenwick-nylon-anorak",
+    name: "Fenwick Nylon Anorak",
+    line: "Outer Atelier",
+    category: "men",
+    price: 940,
+    colour: "Smoke",
+    fabric: "Coated nylon ripstop",
+    fit: "Oversized",
+    sizes: allSizes(["M", "L", "XL"], APPAREL_WIDE),
+    ratio: "4:5",
+    gallery: [
+      { label: "Front", ratio: "4:5" },
+      { label: "Hood up", ratio: "4:5" },
+      { label: "Seam tape", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A half-zip anorak in coated ripstop with fully taped seams and a single kangaroo pocket across the front.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% recycled nylon ripstop, PU coated", "Japan") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Oversized, hip length" },
+          { term: "Model", value: "1.86 m, wearing M" },
+          { term: "Length", value: "76 cm at centre back, size M" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["slate-track-pant", "brix-heavyweight-hoodie", "rundle-boxy-tee"],
+    isNew: true,
+  },
+  {
+    slug: "marlow-cable-crew",
+    name: "Marlow Cable Crew",
+    line: "Core Atelier",
+    category: "men",
+    price: 340,
+    colour: "Oat",
+    fabric: "Lambswool",
+    fit: "Relaxed",
+    sizes: allSizes(["S", "L", "XL"], APPAREL_WIDE),
+    ratio: "4:5",
+    gallery: [
+      { label: "Front", ratio: "4:5" },
+      { label: "Shoulder", ratio: "4:5" },
+      { label: "Cable", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A five-gauge cable crew in undyed lambswool. Saddle shoulders keep the cable running unbroken to the neck.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% undyed lambswool", "Scotland") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Relaxed, saddle shoulder" },
+          { term: "Model", value: "1.86 m, wearing M" },
+          { term: "Length", value: "68 cm at centre back, size M" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["corso-pleated-trouser", "ardent-selvedge-denim", "halden-utility-overshirt"],
+  },
+  {
+    slug: "ardent-selvedge-denim",
+    name: "Ardent Selvedge Denim",
+    line: "Utility Atelier",
+    category: "men",
+    price: 330,
+    colour: "Raw Indigo",
+    fabric: "Japanese selvedge denim",
+    fit: "Relaxed",
+    sizes: allSizes(["S", "M", "L", "XL", "XXL"], APPAREL_WIDE),
+    ratio: "3:4",
+    gallery: [
+      { label: "Front", ratio: "3:4" },
+      { label: "Back", ratio: "3:4" },
+      { label: "Selvedge", ratio: "1:1" },
+      { label: "Hardware", ratio: "1:1" },
+    ],
+    summary:
+      "A straight five-pocket in 14 oz loomstate denim, unwashed so the indigo settles against the way it is worn.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% cotton selvedge denim, 14 oz", "Japan") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Mid rise, straight leg" },
+          { term: "Model", value: "1.86 m, wearing M" },
+          { term: "Inseam", value: "84 cm, size M" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["rundle-boxy-tee", "marlow-cable-crew", "halden-utility-overshirt"],
+  },
+  {
+    slug: "slate-track-pant",
+    name: "Slate Track Pant",
+    line: "Heavy Jersey",
+    category: "men",
+    price: 185,
+    colour: "Charcoal",
+    fabric: "Brushed cotton fleece",
+    fit: "Relaxed",
+    sizes: allSizes(["S", "M", "XL", "XXL"], APPAREL_WIDE),
+    ratio: "3:4",
+    gallery: [
+      { label: "Front", ratio: "3:4" },
+      { label: "Side", ratio: "3:4" },
+      { label: "Waistband", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A brushed-back fleece pant with a flat waistband and an open hem, cut wide enough to sit over a boot.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% organic cotton fleece, 420 gsm", "Portugal") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Relaxed, open hem" },
+          { term: "Model", value: "1.86 m, wearing M" },
+          { term: "Inseam", value: "80 cm, size M" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["brix-heavyweight-hoodie", "fenwick-nylon-anorak", "rundle-boxy-tee"],
+  },
+
+  /* ------------------------------------------------------------------- Teen */
+  {
+    slug: "volta-graphic-tee",
+    name: "Volta Graphic Tee",
+    line: "Teen Studio",
+    category: "teen",
+    price: 85,
+    colour: "Chalk",
+    fabric: "Cotton jersey",
+    fit: "Oversized",
+    sizes: allSizes(["XS", "S", "M", "L"], APPAREL),
+    ratio: "4:5",
+    gallery: [
+      { label: "Front", ratio: "4:5" },
+      { label: "Back", ratio: "4:5" },
+      { label: "Print", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A wide tee with a discharge print at the back yoke, washed once so the hand stays soft against the skin.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% organic cotton, 200 gsm", "Portugal") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Oversized, dropped shoulder" },
+          { term: "Model", value: "1.70 m, wearing S" },
+          { term: "Length", value: "68 cm at centre back, size S" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["ridge-baggy-denim", "onda-fleece-half-zip", "kite-parachute-pant"],
+  },
+  {
+    slug: "nyx-cropped-windbreaker",
+    name: "Nyx Cropped Windbreaker",
+    line: "Teen Studio",
+    category: "teen",
+    price: 220,
+    colour: "Smoke",
+    fabric: "Coated nylon ripstop",
+    fit: "Cropped",
+    sizes: allSizes(["XS", "S", "L"], APPAREL),
+    ratio: "3:4",
+    gallery: [
+      { label: "Front", ratio: "3:4" },
+      { label: "Back", ratio: "3:4" },
+      { label: "Zip pull", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A short windbreaker with an elasticated hem and a stand collar. Packs into its own left-hand pocket.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% recycled nylon ripstop", "Portugal") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Cropped, elasticated hem" },
+          { term: "Model", value: "1.70 m, wearing S" },
+          { term: "Length", value: "54 cm at centre back, size S" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["ridge-baggy-denim", "volta-graphic-tee", "static-boxy-sweat"],
+    isNew: true,
+  },
+  {
+    slug: "ridge-baggy-denim",
+    name: "Ridge Baggy Denim",
+    line: "Teen Studio",
+    category: "teen",
+    price: 175,
+    colour: "Stone Wash",
+    fabric: "Rigid cotton denim",
+    fit: "Oversized",
+    sizes: allSizes(["XS", "S", "M", "L", "XL"], APPAREL),
+    ratio: "3:4",
+    gallery: [
+      { label: "Front", ratio: "3:4" },
+      { label: "Back", ratio: "3:4" },
+      { label: "Hem", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A wide five-pocket in rigid denim, stone washed to a flat mid tone with no whiskering at the hip.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% cotton denim, 12 oz", "Turkey") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Low rise, very wide leg" },
+          { term: "Model", value: "1.70 m, wearing S" },
+          { term: "Inseam", value: "80 cm, size S" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["volta-graphic-tee", "nyx-cropped-windbreaker", "static-boxy-sweat"],
+  },
+  {
+    slug: "onda-fleece-half-zip",
+    name: "Onda Fleece Half-Zip",
+    line: "Teen Studio",
+    category: "teen",
+    price: 165,
+    colour: "Fog",
+    fabric: "Recycled polar fleece",
+    fit: "Relaxed",
+    sizes: allSizes(["S", "M", "L", "XL"], APPAREL),
+    ratio: "4:5",
+    gallery: [
+      { label: "Front", ratio: "4:5" },
+      { label: "Collar", ratio: "4:5" },
+      { label: "Zip", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A deep half-zip in recycled polar fleece with a bound collar that stands without a wire.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% recycled polyester fleece, 300 gsm", "Portugal") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Relaxed, hip length" },
+          { term: "Model", value: "1.72 m, wearing M" },
+          { term: "Length", value: "66 cm at centre back, size M" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["kite-parachute-pant", "ridge-baggy-denim", "volta-graphic-tee"],
+  },
+  {
+    slug: "kite-parachute-pant",
+    name: "Kite Parachute Pant",
+    line: "Teen Studio",
+    category: "teen",
+    price: 195,
+    colour: "Ash Olive",
+    fabric: "Nylon taffeta",
+    fit: "Oversized",
+    sizes: allSizes(["XS", "M", "L"], APPAREL),
+    ratio: "3:4",
+    gallery: [
+      { label: "Front", ratio: "3:4" },
+      { label: "Cinched", ratio: "3:4" },
+      { label: "Toggle", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A parachute pant in light taffeta with cord channels at the knee and hem, so the volume can be pulled in or left to fall.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% recycled nylon taffeta", "Turkey") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Oversized, adjustable at knee and hem" },
+          { term: "Model", value: "1.70 m, wearing S" },
+          { term: "Inseam", value: "78 cm, size S" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["onda-fleece-half-zip", "volta-graphic-tee", "nyx-cropped-windbreaker"],
+  },
+  {
+    slug: "static-boxy-sweat",
+    name: "Static Boxy Sweat",
+    line: "Teen Studio",
+    category: "teen",
+    price: 145,
+    colour: "Bone",
+    fabric: "Brushed cotton fleece",
+    fit: "Oversized",
+    sizes: allSizes(["XS", "S", "M", "L", "XL"], APPAREL),
+    ratio: "4:5",
+    gallery: [
+      { label: "Front", ratio: "4:5" },
+      { label: "Back", ratio: "4:5" },
+      { label: "Rib", ratio: "1:1" },
+      { label: "Fabric", ratio: "1:1" },
+    ],
+    summary:
+      "A square crew sweat with set-in sleeves and a wide rib at the hem that stops the body from riding up.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% organic cotton fleece, 400 gsm", "Portugal") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Boxy, wide rib hem" },
+          { term: "Model", value: "1.72 m, wearing S" },
+          { term: "Length", value: "62 cm at centre back, size S" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["ridge-baggy-denim", "kite-parachute-pant", "onda-fleece-half-zip"],
+  },
+  {
+    slug: "dune-corduroy-shacket",
+    name: "Dune Corduroy Shacket",
+    line: "Teen Studio",
+    category: "teen",
+    price: 240,
+    colour: "Oat",
+    fabric: "Wide-wale corduroy",
+    fit: "Relaxed",
+    sizes: allSizes(["S", "M", "L"], APPAREL),
+    ratio: "3:4",
+    gallery: [
+      { label: "Front", ratio: "3:4" },
+      { label: "Open", ratio: "3:4" },
+      { label: "Wale", ratio: "1:1" },
+      { label: "Lining", ratio: "1:1" },
+    ],
+    summary:
+      "An unlined shacket in eight-wale corduroy with a flannel-backed yoke and horn-look buttons.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% cotton corduroy, 8 wale", "Portugal") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Relaxed, squared hem" },
+          { term: "Model", value: "1.72 m, wearing M" },
+          { term: "Length", value: "72 cm at centre back, size M" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["ridge-baggy-denim", "static-boxy-sweat", "volta-graphic-tee"],
+  },
+  {
+    slug: "pilot-mesh-layer",
+    name: "Pilot Mesh Layer",
+    line: "Teen Studio",
+    category: "teen",
+    price: 95,
+    colour: "Smoke",
+    fabric: "Open cotton mesh",
+    fit: "Relaxed",
+    sizes: allSizes(["XS", "S", "L", "XL"], APPAREL),
+    ratio: "4:5",
+    gallery: [
+      { label: "Front", ratio: "4:5" },
+      { label: "Layered", ratio: "4:5" },
+      { label: "Mesh", ratio: "1:1" },
+      { label: "Hem", ratio: "1:1" },
+    ],
+    summary:
+      "A long-sleeved open mesh worn as a layer under jersey. Knitted flat so the openings keep their grid.",
+    specs: [
+      { id: "materials", title: "Materials and care", rows: careRows("100% cotton open mesh", "Portugal") },
+      {
+        id: "fit",
+        title: "Fit and measurements",
+        rows: [
+          { term: "Fit", value: "Relaxed, long sleeve" },
+          { term: "Model", value: "1.70 m, wearing S" },
+          { term: "Length", value: "64 cm at centre back, size S" },
+        ],
+      },
+      {
+        id: "delivery",
+        title: "Delivery and returns",
+        rows: [
+          { term: "Standard", value: "3 to 5 working days" },
+          { term: "Express", value: "Next working day, ordered before 14:00" },
+          { term: "Returns", value: "30 days, collection booked from your address" },
+        ],
+      },
+    ],
+    pairsWith: ["volta-graphic-tee", "kite-parachute-pant", "nyx-cropped-windbreaker"],
+  },
+];
+
+const BY_SLUG = new Map(PRODUCTS.map((product) => [product.slug, product]));
+
+export function getProduct(slug: string): Product | undefined {
+  return BY_SLUG.get(slug);
+}
+
+export function getProducts(slugs: ReadonlyArray<string>): Product[] {
+  return slugs.map((slug) => BY_SLUG.get(slug)).filter((p): p is Product => Boolean(p));
+}
+
+export function getCategory(slug: string): Category | undefined {
+  return CATEGORIES.find((category) => category.slug === slug);
+}
+
+export function getProductsByCategory(slug: CategorySlug): Product[] {
+  return PRODUCTS.filter((product) => product.category === slug);
+}
+
+/** Homepage featured drop. Deliberately hand-picked rather than sliced. */
+export const FEATURED_DROP_SLUGS: ReadonlyArray<string> = [
+  "anvers-cropped-bomber",
+  "fenwick-nylon-anorak",
+  "nord-quilted-liner",
+  "nyx-cropped-windbreaker",
+];
+
+export function isCategorySlug(value: string): value is CategorySlug {
+  return CATEGORIES.some((category) => category.slug === value);
+}

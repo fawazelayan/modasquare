@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "bounce-easing",
+        "value": "var(--ease-spring)",
+        "createdAt": "2026-08-26T14:18:23.624Z",
+        "reason": "Not a bounce: cubic-bezier(0.16,1,0.3,1) has all control-point y values within [0,1], so it is monotonic and never overshoots. It is the ease-out-expo curve the rule recommends; the token name tripped the matcher. Also specified verbatim in DESIGN.md section 6."
+      }
+    ]
+  }
+}
