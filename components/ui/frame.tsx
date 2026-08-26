@@ -1,14 +1,13 @@
+import Image from "next/image";
 import { cn } from "@/lib/cn";
 import type { AspectRatio } from "@/lib/catalog";
 
 /**
- * Structured media placeholder.
+ * Structured media frame.
  *
- * The brief rules out external imagery, so every visual slot in the prototype is
- * a declared frame: an explicit aspect ratio, a hairline boundary, a drafting
- * grid and a minimal label. Because the ratio is set in CSS the box reserves its
- * own height before paint, which is what keeps cumulative layout shift at zero
- * when real photography is dropped in later.
+ * Supports high-resolution photography with exact aspect-ratio reservation to
+ * prevent layout shift (CLS: 0), with architectural wireframe fallback when
+ * photography is not supplied.
  */
 
 const RATIO_VALUE: Record<AspectRatio, string> = {
@@ -29,6 +28,14 @@ export interface FrameProps {
   readonly className?: string;
   /** Grid pitch in pixels. Larger frames carry a coarser rule. */
   readonly pitch?: number;
+  /** High-resolution image URL. */
+  readonly image?: string;
+  /** Accessible alt text for real images. */
+  readonly alt?: string;
+  /** Preload above-the-fold hero images. */
+  readonly priority?: boolean;
+  /** Responsive image sizes hint. */
+  readonly sizes?: string;
 }
 
 export function Frame({
@@ -38,12 +45,14 @@ export function Frame({
   tone = "field",
   className,
   pitch = 40,
+  image,
+  alt,
+  priority = false,
+  sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
 }: FrameProps) {
   return (
     <div
-      // Decorative by construction: the surrounding card already names the
-      // product, so a screen reader gains nothing from the placeholder text.
-      aria-hidden="true"
+      aria-hidden={image ? undefined : "true"}
       className={cn(
         "relative isolate w-full overflow-hidden rounded-[2px] border border-[var(--color-hairline)]",
         tone === "field" ? "bg-[var(--color-wireframe)]" : "bg-[var(--color-surface)]",
@@ -51,33 +60,46 @@ export function Frame({
       )}
       style={{ aspectRatio: RATIO_VALUE[ratio] }}
     >
-      {/* Drafting rule. Two repeating gradients, no extra DOM node. */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          backgroundImage: `repeating-linear-gradient(to right, var(--color-wireframe-rule) 0 1px, transparent 1px ${pitch}px), repeating-linear-gradient(to bottom, var(--color-wireframe-rule) 0 1px, transparent 1px ${pitch}px)`,
-        }}
-      />
+      {image ? (
+        <Image
+          src={image}
+          alt={alt ?? label}
+          fill
+          priority={priority}
+          sizes={sizes}
+          className="object-cover object-center transition-transform duration-700 [transition-timing-function:var(--ease-spring)]"
+        />
+      ) : (
+        <>
+          {/* Drafting rule. Two repeating gradients, no extra DOM node. */}
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage: `repeating-linear-gradient(to right, var(--color-wireframe-rule) 0 1px, transparent 1px ${pitch}px), repeating-linear-gradient(to bottom, var(--color-wireframe-rule) 0 1px, transparent 1px ${pitch}px)`,
+            }}
+          />
 
-      {/* Registration marks at the corners, the way a cutting plan is marked. */}
-      <span className="pointer-events-none absolute left-3 top-3 h-3 w-3 border-l border-t border-[var(--color-hairline-strong)]" />
-      <span className="pointer-events-none absolute right-3 top-3 h-3 w-3 border-r border-t border-[var(--color-hairline-strong)]" />
-      <span className="pointer-events-none absolute bottom-3 left-3 h-3 w-3 border-b border-l border-[var(--color-hairline-strong)]" />
-      <span className="pointer-events-none absolute bottom-3 right-3 h-3 w-3 border-b border-r border-[var(--color-hairline-strong)]" />
+          {/* Registration marks at the corners, the way a cutting plan is marked. */}
+          <span className="pointer-events-none absolute left-3 top-3 h-3 w-3 border-l border-t border-[var(--color-hairline-strong)]" />
+          <span className="pointer-events-none absolute right-3 top-3 h-3 w-3 border-r border-t border-[var(--color-hairline-strong)]" />
+          <span className="pointer-events-none absolute bottom-3 left-3 h-3 w-3 border-b border-l border-[var(--color-hairline-strong)]" />
+          <span className="pointer-events-none absolute bottom-3 right-3 h-3 w-3 border-b border-r border-[var(--color-hairline-strong)]" />
 
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 px-4 text-center">
-        <span className="numeral text-[11px] uppercase tracking-[0.18em] text-[var(--color-muted)]">
-          {label}
-        </span>
-        {note ? (
-          <span className="numeral text-[10px] uppercase tracking-[0.16em] text-[var(--color-muted)] opacity-70">
-            {note}
-          </span>
-        ) : null}
-        <span className="numeral mt-1 text-[10px] tracking-[0.14em] text-[var(--color-muted)] opacity-60">
-          {ratio}
-        </span>
-      </div>
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 px-4 text-center">
+            <span className="numeral text-[11px] uppercase tracking-[0.18em] text-[var(--color-muted)]">
+              {label}
+            </span>
+            {note ? (
+              <span className="numeral text-[10px] uppercase tracking-[0.16em] text-[var(--color-muted)] opacity-70">
+                {note}
+              </span>
+            ) : null}
+            <span className="numeral mt-1 text-[10px] tracking-[0.14em] text-[var(--color-muted)] opacity-60">
+              {ratio}
+            </span>
+          </div>
+        </>
+      )}
     </div>
   );
 }

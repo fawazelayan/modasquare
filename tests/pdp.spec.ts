@@ -82,7 +82,7 @@ test.describe("product detail", () => {
 
     await expect(page.getByTestId("cart-drawer")).toBeVisible();
     await expect(page.getByTestId("cart-count")).toHaveText("3");
-    await expect(page.getByTestId("cart-subtotal")).toHaveText("€345");
+    await expect(page.getByTestId("cart-subtotal")).toHaveText(/JOD\s*345/);
   });
 
   test("specification panels open and close without moving the page around them", async ({

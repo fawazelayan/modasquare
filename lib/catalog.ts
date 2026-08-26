@@ -1,9 +1,8 @@
 /**
  * Static catalogue for the MODASQUARE prototype.
  *
- * The brief is structure, hierarchy and flow, so there is no network layer here.
- * Everything is typed and colocated, which keeps the pages Server Components and
- * keeps the client bundle to interaction code only.
+ * All products, categories, specs, and curated editorial photography assets
+ * are typed and colocated.
  */
 
 export type AspectRatio = "3:4" | "4:5" | "16:9" | "1:1" | "9:16";
@@ -22,9 +21,11 @@ export interface SizeOption {
 }
 
 export interface Frame {
-  /** Minimalist wireframe caption. Kept to one or two words. */
+  /** Minimalist caption or shot description. */
   readonly label: string;
   readonly ratio: AspectRatio;
+  readonly image?: string;
+  readonly note?: string;
 }
 
 export interface SpecPanel {
@@ -39,7 +40,7 @@ export interface Product {
   /** Collection line shown as metadata under the product name. */
   readonly line: string;
   readonly category: CategorySlug;
-  /** Minor units, EUR. Formatted through Intl at render time. */
+  /** Minor units, JOD (Jordanian Dinar). Formatted through Intl at render time. */
   readonly price: number;
   readonly colour: string;
   readonly fabric: string;
@@ -60,6 +61,7 @@ export interface Category {
   readonly label: string;
   readonly headline: string;
   readonly note: string;
+  readonly image?: string;
 }
 
 export const CATEGORIES: ReadonlyArray<Category> = [
@@ -68,18 +70,21 @@ export const CATEGORIES: ReadonlyArray<Category> = [
     label: "Women",
     headline: "Women",
     note: "Structured outerwear, column tailoring and heavyweight jersey cut for volume.",
+    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1600",
   },
   {
     slug: "men",
     label: "Men",
     headline: "Men",
     note: "Utility layers, pleated trousers and loomstate denim built to hold their shape.",
+    image: "https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=1600",
   },
   {
     slug: "teen",
     label: "Teen",
     headline: "Teen",
     note: "Lighter constructions, wider silhouettes and technical nylon in the same palette.",
+    image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&q=80&w=1600",
   },
 ];
 
@@ -95,13 +100,13 @@ export interface PriceBand {
 }
 
 export const PRICE_BANDS: ReadonlyArray<PriceBand> = [
-  { id: "band-1", label: "Under 200", min: 0, max: 199 },
-  { id: "band-2", label: "200 to 400", min: 200, max: 399 },
-  { id: "band-3", label: "400 to 800", min: 400, max: 799 },
-  { id: "band-4", label: "800 and above", min: 800, max: Number.POSITIVE_INFINITY },
+  { id: "band-1", label: "Under 200 JOD", min: 0, max: 199 },
+  { id: "band-2", label: "200 to 400 JOD", min: 200, max: 399 },
+  { id: "band-3", label: "400 to 800 JOD", min: 400, max: 799 },
+  { id: "band-4", label: "800 JOD and above", min: 800, max: Number.POSITIVE_INFINITY },
 ];
 
-/** Free-shipping threshold used by the cart drawer tracker. */
+/** Free-shipping threshold in JOD used by the cart drawer tracker. */
 export const FREE_SHIPPING_THRESHOLD: number = 350;
 
 const allSizes = (stocked: ReadonlyArray<SizeLabel>, offered: ReadonlyArray<SizeLabel>): SizeOption[] =>
@@ -130,10 +135,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "M", "XL"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4" },
-      { label: "Back", ratio: "3:4" },
-      { label: "Collar detail", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Back", ratio: "3:4", image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Collar detail", ratio: "1:1", image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A short bomber cut with a raised collar and a dropped shoulder. The canvas is bonded so the body holds a clean line away from the waist.",
@@ -177,10 +182,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "M", "L", "XL"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4" },
-      { label: "Side", ratio: "3:4" },
-      { label: "Waistband", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Side", ratio: "3:4", image: "https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Waistband", ratio: "1:1", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A single-pleat trouser in a dry flannel. The leg falls straight from a high waistband with no taper below the knee.",
@@ -219,10 +224,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5" },
-      { label: "Sleeve", ratio: "4:5" },
-      { label: "Rib detail", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Sleeve", ratio: "4:5", image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Rib detail", ratio: "1:1", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A square-bodied crew knitted in compact merino, so the shoulder stays flat and the hem holds without a heavy rib.",
@@ -261,10 +266,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "L", "XL"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4" },
-      { label: "Hood", ratio: "3:4" },
-      { label: "Cuff", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Hood", ratio: "3:4", image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Cuff", ratio: "1:1", image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A 480 gsm loopback hoodie with a two-panel hood and a metal zip that runs to the chin.",
@@ -303,10 +308,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "M", "L"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4" },
-      { label: "Back", ratio: "3:4" },
-      { label: "Hem", ratio: "1:1" },
-      { label: "Selvedge", ratio: "1:1" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Back", ratio: "3:4", image: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Hem", ratio: "1:1", image: "https://images.unsplash.com/photo-1582552938357-32b906df40cb?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Selvedge", ratio: "1:1", image: "https://images.unsplash.com/photo-1582552938357-32b906df40cb?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A floor-skimming column in loomstate denim. The side seam is left unwashed so the skirt breaks in against the wearer.",
@@ -346,10 +351,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5" },
-      { label: "Open", ratio: "4:5" },
-      { label: "Quilting", ratio: "1:1" },
-      { label: "Lining", ratio: "1:1" },
+      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Open", ratio: "4:5", image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Quilting", ratio: "1:1", image: "https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Lining", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A long quilted liner that wears as an outer layer. Wool wadding keeps the weight down without collapsing the channel lines.",
@@ -388,10 +393,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "M", "L", "XL"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5" },
-      { label: "Back", ratio: "4:5" },
-      { label: "Neckline", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Back", ratio: "4:5", image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Neckline", ratio: "1:1", image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A narrow rib tank with a bound neckline. Mercerised so the surface stays even after repeated washing.",
@@ -430,10 +435,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "M", "L", "XL"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4" },
-      { label: "Pocket", ratio: "3:4" },
-      { label: "Hem cinch", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Pocket", ratio: "3:4", image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Hem cinch", ratio: "1:1", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A wide cargo in tightly woven ventile, with bellows pockets set back on the thigh so the leg line stays clean from the front.",
@@ -472,10 +477,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "M"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5" },
-      { label: "Layered", ratio: "4:5" },
-      { label: "Seam", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Layered", ratio: "4:5", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Seam", ratio: "1:1", image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A long-sleeved georgette layer with French seams throughout, cut to sit over a tank without adding bulk at the shoulder.",
@@ -514,10 +519,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4" },
-      { label: "Open", ratio: "3:4" },
-      { label: "Placket", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Open", ratio: "3:4", image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Placket", ratio: "1:1", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A shirt cut to overshirt proportions, with a hidden placket and a squared hem that reads as a jacket when left open.",
@@ -558,10 +563,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XXL"], APPAREL_WIDE),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4" },
-      { label: "Back", ratio: "3:4" },
-      { label: "Pocket", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Back", ratio: "3:4", image: "https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Pocket", ratio: "1:1", image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A square overshirt in ventile with two chest pockets set wide. Heavy enough to wear as the outer layer into autumn.",
@@ -601,10 +606,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL", "XXL"], APPAREL_WIDE),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4" },
-      { label: "Hood", ratio: "3:4" },
-      { label: "Cuff", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Hood", ratio: "3:4", image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Cuff", ratio: "1:1", image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A 520 gsm hoodie with a three-panel hood and a flat drawcord. The body is cut wide and stops at the hip.",
@@ -643,10 +648,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL"], APPAREL_WIDE),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4" },
-      { label: "Side", ratio: "3:4" },
-      { label: "Pleat", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Side", ratio: "3:4", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Pleat", ratio: "1:1", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A double-pleat trouser with a wide waistband and a half-inch cuff. The flannel is milled dry so the crease holds.",
@@ -685,10 +690,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL", "XXL"], APPAREL_WIDE),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5" },
-      { label: "Back", ratio: "4:5" },
-      { label: "Collar", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Back", ratio: "4:5", image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Collar", ratio: "1:1", image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A tubular-knit tee with no side seams, so the body stays square through the wash. Ribbed collar set by hand.",
@@ -727,10 +732,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["M", "L", "XL"], APPAREL_WIDE),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5" },
-      { label: "Hood up", ratio: "4:5" },
-      { label: "Seam tape", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Hood up", ratio: "4:5", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Seam tape", ratio: "1:1", image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A half-zip anorak in coated ripstop with fully taped seams and a single kangaroo pocket across the front.",
@@ -770,10 +775,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "L", "XL"], APPAREL_WIDE),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5" },
-      { label: "Shoulder", ratio: "4:5" },
-      { label: "Cable", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Shoulder", ratio: "4:5", image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Cable", ratio: "1:1", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A five-gauge cable crew in undyed lambswool. Saddle shoulders keep the cable running unbroken to the neck.",
@@ -812,10 +817,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL", "XXL"], APPAREL_WIDE),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4" },
-      { label: "Back", ratio: "3:4" },
-      { label: "Selvedge", ratio: "1:1" },
-      { label: "Hardware", ratio: "1:1" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Back", ratio: "3:4", image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Selvedge", ratio: "1:1", image: "https://images.unsplash.com/photo-1582552938357-32b906df40cb?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Hardware", ratio: "1:1", image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A straight five-pocket in 14 oz loomstate denim, unwashed so the indigo settles against the way it is worn.",
@@ -854,10 +859,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "XL", "XXL"], APPAREL_WIDE),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4" },
-      { label: "Side", ratio: "3:4" },
-      { label: "Waistband", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Side", ratio: "3:4", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Waistband", ratio: "1:1", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A brushed-back fleece pant with a flat waistband and an open hem, cut wide enough to sit over a boot.",
@@ -898,10 +903,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "M", "L"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5" },
-      { label: "Back", ratio: "4:5" },
-      { label: "Print", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Back", ratio: "4:5", image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Print", ratio: "1:1", image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A wide tee with a discharge print at the back yoke, washed once so the hand stays soft against the skin.",
@@ -940,10 +945,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "L"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4" },
-      { label: "Back", ratio: "3:4" },
-      { label: "Zip pull", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Back", ratio: "3:4", image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Zip pull", ratio: "1:1", image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A short windbreaker with an elasticated hem and a stand collar. Packs into its own left-hand pocket.",
@@ -983,10 +988,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "M", "L", "XL"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4" },
-      { label: "Back", ratio: "3:4" },
-      { label: "Hem", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Back", ratio: "3:4", image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Hem", ratio: "1:1", image: "https://images.unsplash.com/photo-1582552938357-32b906df40cb?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1582552938357-32b906df40cb?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A wide five-pocket in rigid denim, stone washed to a flat mid tone with no whiskering at the hip.",
@@ -1025,10 +1030,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5" },
-      { label: "Collar", ratio: "4:5" },
-      { label: "Zip", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Collar", ratio: "4:5", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Zip", ratio: "1:1", image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A deep half-zip in recycled polar fleece with a bound collar that stands without a wire.",
@@ -1067,10 +1072,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "M", "L"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4" },
-      { label: "Cinched", ratio: "3:4" },
-      { label: "Toggle", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Cinched", ratio: "3:4", image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Toggle", ratio: "1:1", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A parachute pant in light taffeta with cord channels at the knee and hem, so the volume can be pulled in or left to fall.",
@@ -1109,10 +1114,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "M", "L", "XL"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5" },
-      { label: "Back", ratio: "4:5" },
-      { label: "Rib", ratio: "1:1" },
-      { label: "Fabric", ratio: "1:1" },
+      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Back", ratio: "4:5", image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Rib", ratio: "1:1", image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A square crew sweat with set-in sleeves and a wide rib at the hem that stops the body from riding up.",
@@ -1151,10 +1156,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4" },
-      { label: "Open", ratio: "3:4" },
-      { label: "Wale", ratio: "1:1" },
-      { label: "Lining", ratio: "1:1" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Open", ratio: "3:4", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Wale", ratio: "1:1", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Lining", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "An unlined shacket in eight-wale corduroy with a flannel-backed yoke and horn-look buttons.",
@@ -1193,10 +1198,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "L", "XL"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5" },
-      { label: "Layered", ratio: "4:5" },
-      { label: "Mesh", ratio: "1:1" },
-      { label: "Hem", ratio: "1:1" },
+      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Layered", ratio: "4:5", image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Mesh", ratio: "1:1", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Hem", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
     summary:
       "A long-sleeved open mesh worn as a layer under jersey. Knitted flat so the openings keep their grid.",

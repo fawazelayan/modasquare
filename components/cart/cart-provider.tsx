@@ -31,6 +31,7 @@ export interface CartLine {
   readonly size: SizeLabel;
   readonly price: number;
   readonly quantity: number;
+  readonly image?: string;
 }
 
 interface RemovedLine {
@@ -88,6 +89,7 @@ function reducer(state: CartState, action: CartAction): CartState {
         size: action.size,
         price: action.product.price,
         quantity: Math.min(MAX_PER_LINE, action.quantity),
+        image: action.product.gallery[0]?.image,
       };
 
       return { lastRemoved: null, lines: [...state.lines, next] };

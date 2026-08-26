@@ -11,9 +11,30 @@ import { Reveal } from "@/components/ui/reveal";
  */
 
 const PLATES = [
-  { label: "Bar tack", note: "Stitch detail", ratio: "3:4" as const, offset: "lg:mt-0", pitch: 34 },
-  { label: "Selvedge", note: "Fabric edge", ratio: "4:5" as const, offset: "lg:mt-24", pitch: 30 },
-  { label: "Two-part cuff", note: "Hardware", ratio: "1:1" as const, offset: "lg:mt-10", pitch: 38 },
+  {
+    label: "Bar tack",
+    note: "Stitch detail",
+    ratio: "3:4" as const,
+    offset: "lg:mt-0",
+    pitch: 34,
+    image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&q=80&w=800",
+  },
+  {
+    label: "Selvedge",
+    note: "Fabric edge",
+    ratio: "4:5" as const,
+    offset: "lg:mt-24",
+    pitch: 30,
+    image: "https://images.unsplash.com/photo-1582552938357-32b906df40cb?auto=format&fit=crop&q=80&w=800",
+  },
+  {
+    label: "Two-part cuff",
+    note: "Hardware",
+    ratio: "1:1" as const,
+    offset: "lg:mt-10",
+    pitch: 38,
+    image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=800",
+  },
 ];
 
 export function AtelierNote() {
@@ -41,7 +62,14 @@ export function AtelierNote() {
             className={index === 2 ? `col-span-2 lg:col-span-1 ${plate.offset}` : plate.offset}
           >
             {/* The frame already names itself, so there is no caption under it. */}
-            <Frame ratio={plate.ratio} label={plate.label} note={plate.note} pitch={plate.pitch} />
+            <Frame
+              ratio={plate.ratio}
+              label={plate.label}
+              note={plate.note}
+              image={plate.image}
+              alt={`Atelier craft: ${plate.label} - ${plate.note}`}
+              pitch={plate.pitch}
+            />
           </Reveal>
         ))}
       </div>

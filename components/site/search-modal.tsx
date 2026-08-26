@@ -202,7 +202,13 @@ export function SearchModal({
                             onClick={onClose}
                             className="group block"
                           >
-                            <Frame ratio="3:4" label={product.colour} pitch={22} />
+                            <Frame
+                              ratio="3:4"
+                              label={product.colour}
+                              image={product.gallery[0]?.image}
+                              alt={product.name}
+                              pitch={22}
+                            />
                             <p className="mt-2 truncate text-[14px] text-[var(--color-ink)] underline decoration-transparent decoration-1 underline-offset-4 transition-[text-decoration-color] duration-200 group-hover:decoration-[var(--color-ink)]">
                               {product.name}
                             </p>

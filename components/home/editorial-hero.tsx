@@ -74,14 +74,30 @@ export function EditorialHero() {
             style={{ ["--reveal-index" as string]: 4 }}
           >
             <div className="ml-auto w-[86%] lg:w-full">
-              <Frame ratio="3:4" label="Look 01" note="Anvers bomber" pitch={44} />
+              <Frame
+                ratio="3:4"
+                label="Look 01"
+                note="Anvers bomber"
+                image="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1200"
+                alt="Atelier Series 04 - Look 01 Anvers Cropped Bomber"
+                priority
+                pitch={44}
+              />
             </div>
 
             {/* Pulled up and left so the pair overlaps rather than stacking.
                 The negative top margin is what keeps the whole composition
                 inside the first screen at desktop. */}
             <div className="relative -mt-16 w-[46%] sm:w-[38%] lg:-ml-14 lg:-mt-28 lg:w-[46%]">
-              <Frame ratio="1:1" label="Bonded canvas" note="Fabric" tone="raised" pitch={26} />
+              <Frame
+                ratio="1:1"
+                label="Bonded canvas"
+                note="Fabric"
+                image="https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=800"
+                alt="Bonded cotton canvas fabric macro"
+                tone="raised"
+                pitch={26}
+              />
             </div>
           </div>
         </div>

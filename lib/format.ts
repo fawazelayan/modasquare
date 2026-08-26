@@ -8,7 +8,7 @@
  */
 
 const LOCALE = "en-GB";
-const CURRENCY = "EUR";
+const CURRENCY = "JOD";
 
 const priceFormatter = new Intl.NumberFormat(LOCALE, {
   style: "currency",

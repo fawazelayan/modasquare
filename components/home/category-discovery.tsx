@@ -45,6 +45,8 @@ export function CategoryDiscovery() {
                       ratio={layout.ratio}
                       label={category.label}
                       note="Collection plate"
+                      image={category.image}
+                      alt={`${category.label} collection lookbook plate`}
                       pitch={layout.pitch}
                     />
                   </div>

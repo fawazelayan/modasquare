@@ -176,7 +176,13 @@ export function CartDrawer() {
                         tabIndex={-1}
                         aria-hidden="true"
                       >
-                        <Frame ratio="3:4" label={line.colour} pitch={18} />
+                        <Frame
+                          ratio="3:4"
+                          label={line.colour}
+                          image={line.image}
+                          alt={line.name}
+                          pitch={18}
+                        />
                       </Link>
 
                       <div className="flex min-w-0 flex-1 flex-col gap-2">

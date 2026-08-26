@@ -65,6 +65,9 @@ export function ProductGallery({ product }: { readonly product: Product }) {
               ratio={shot.ratio}
               label={shot.label}
               note={index === 0 ? product.colour : undefined}
+              image={shot.image}
+              alt={`${product.name} - ${shot.label}`}
+              priority={index === 0}
               pitch={shot.ratio === "1:1" ? 34 : 48}
             />
           </li>

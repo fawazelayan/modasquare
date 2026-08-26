@@ -66,6 +66,8 @@ export function ProductCard({
               ratio={product.ratio}
               label={product.colour}
               note={isDense ? undefined : primary?.label}
+              image={primary?.image}
+              alt={`${product.name} in ${product.colour}`}
               pitch={isDense ? 26 : 40}
             />
           </div>
@@ -84,6 +86,8 @@ export function ProductCard({
                 ratio={product.ratio}
                 label={secondary.label}
                 note={isDense ? undefined : "Second angle"}
+                image={secondary.image}
+                alt={`${product.name} ${secondary.label} view`}
                 tone="raised"
                 pitch={isDense ? 26 : 40}
               />

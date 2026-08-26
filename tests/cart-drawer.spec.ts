@@ -101,16 +101,16 @@ test.describe("cart drawer", () => {
     await page.getByTestId("add-to-bag").click();
     await expect(page.getByTestId("cart-drawer")).toBeVisible();
 
-    await expect(page.getByTestId("cart-subtotal")).toHaveText("€130");
+    await expect(page.getByTestId("cart-subtotal")).toHaveText(/JOD\s*130/);
 
     const stepper = "qty-aster-ribbed-tank--M";
     await page.getByTestId(`${stepper}-increase`).click();
     await expect(page.getByTestId(`${stepper}-value`)).toContainText("2");
-    await expect(page.getByTestId("cart-subtotal")).toHaveText("€260");
+    await expect(page.getByTestId("cart-subtotal")).toHaveText(/JOD\s*260/);
     await expect(page.getByTestId("cart-count")).toHaveText("2");
 
     await page.getByTestId(`${stepper}-decrease`).click();
-    await expect(page.getByTestId("cart-subtotal")).toHaveText("€130");
+    await expect(page.getByTestId("cart-subtotal")).toHaveText(/JOD\s*130/);
 
     // At one, decreasing further is disabled: removal is its own explicit action.
     await expect(page.getByTestId(`${stepper}-decrease`)).toBeDisabled();
