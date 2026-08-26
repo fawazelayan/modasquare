@@ -1,23 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { EmptyResults } from "@/components/plp/empty-results";
-import { FilterBar } from "@/components/plp/filter-bar";
-import { ProductGrid } from "@/components/plp/product-grid";
+import { CollectionView } from "@/components/plp/collection-view";
 import { CATEGORIES, getCategory, getProductsByCategory, isCategorySlug } from "@/lib/catalog";
-import { applyFilters, parseFilters } from "@/lib/filters";
-
-/**
- * Product listing page.
- *
- * A Server Component. The filter rail below writes the query string; this page
- * reads it back, applies the predicate, and renders the result. The grid is
- * therefore server-rendered at the requested filter state, so a shared link
- * arrives showing exactly what the sender was looking at.
- */
 
 type PageProps = {
   params: Promise<{ category: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export function generateStaticParams() {
@@ -36,7 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function CategoryPage({ params, searchParams }: PageProps) {
+export default async function CategoryPage({ params }: PageProps) {
   const { category: slug } = await params;
 
   if (!isCategorySlug(slug)) notFound();
@@ -44,9 +31,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
   const category = getCategory(slug);
   if (!category) notFound();
 
-  const filters = parseFilters(await searchParams);
   const allProducts = getProductsByCategory(slug);
-  const products = applyFilters(allProducts, filters);
 
   return (
     <>
@@ -68,19 +53,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         </div>
       </section>
 
-      <FilterBar
-        filters={filters}
-        resultCount={products.length}
-        totalCount={allProducts.length}
-      />
-
-      <section aria-label={`${category.label} products`} className="atelier-shell pb-[clamp(4rem,9vw,7rem)] pt-10">
-        {products.length === 0 ? (
-          <EmptyResults filters={filters} collectionLabel={category.label} />
-        ) : (
-          <ProductGrid products={products} view={filters.view} />
-        )}
-      </section>
+      <CollectionView category={category} initialProducts={allProducts} />
     </>
   );
 }
