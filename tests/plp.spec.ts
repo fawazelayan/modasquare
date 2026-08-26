@@ -128,7 +128,7 @@ test.describe("product listing", () => {
 
     await page.getByTestId("filter-clear").click();
     await expect(page.getByTestId("filter-clear")).toHaveCount(0);
-    await expect(page).toHaveURL(/\/teen$/);
+    await expect(page).toHaveURL(/\/teen\/?$/);
   });
 
   test("browser Back restores the previous filter state", async ({ page }) => {

@@ -21,7 +21,7 @@ test.describe("navigation and search", () => {
     }
 
     await page.getByTestId(`${prefix}-men`).click();
-    await page.waitForURL(/\/men$/);
+    await page.waitForURL(/\/men\/?$/);
     await expect(page.getByRole("heading", { level: 1, name: "Men" })).toBeVisible();
     await expect(page.getByTestId(`${prefix}-men`)).toHaveAttribute("aria-current", "page");
   });
