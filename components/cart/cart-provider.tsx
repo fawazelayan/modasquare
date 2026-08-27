@@ -155,6 +155,7 @@ interface CartContextValue {
   readonly dismissUndo: () => void;
   readonly openDrawer: () => void;
   readonly closeDrawer: () => void;
+  readonly clearCart: () => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -231,6 +232,7 @@ export function CartProvider({ children }: { readonly children: ReactNode }) {
   const dismissUndo = useCallback(() => dispatch({ type: "dismissUndo" }), []);
   const openDrawer = useCallback(() => setDrawerOpen(true), []);
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
+  const clearCart = useCallback(() => dispatch({ type: "clear" }), []);
 
   const value = useMemo<CartContextValue>(() => {
     const itemCount = state.lines.reduce((sum, line) => sum + line.quantity, 0);
@@ -257,6 +259,7 @@ export function CartProvider({ children }: { readonly children: ReactNode }) {
       dismissUndo,
       openDrawer,
       closeDrawer,
+      clearCart,
     };
   }, [
     state.lines,
@@ -270,6 +273,7 @@ export function CartProvider({ children }: { readonly children: ReactNode }) {
     dismissUndo,
     openDrawer,
     closeDrawer,
+    clearCart,
   ]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

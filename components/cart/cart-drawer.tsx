@@ -227,8 +227,9 @@ export function CartDrawer() {
                   Taxes and delivery are calculated at the next step.
                 </p>
 
-                <button
-                  type="button"
+                <Link
+                  href="/checkout"
+                  onClick={closeDrawer}
                   data-testid="checkout-button"
                   className={
                     "group relative mt-4 flex min-h-[50px] w-full items-center justify-center gap-2 rounded-[2px] " +
@@ -242,7 +243,7 @@ export function CartDrawer() {
                   }
                 >
                   Proceed to checkout
-                </button>
+                </Link>
 
                 <button
                   type="button"
