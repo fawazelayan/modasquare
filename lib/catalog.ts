@@ -768,10 +768,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL", "XXL"], APPAREL_WIDE),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Back", ratio: "4:5", image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Collar", ratio: "1:1", image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "4:5", image: "/images/products/rundle-boxy-tee.jpg" },
+      { label: "Back", ratio: "4:5", image: "/images/products/rundle-boxy-tee.jpg" },
+      { label: "Collar", ratio: "1:1", image: "/images/products/rundle-boxy-tee.jpg" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/rundle-boxy-tee.jpg" },
     ],
     summary:
       "A tubular-knit tee with no side seams, so the body stays square through the wash. Ribbed collar set by hand.",
@@ -811,10 +811,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["M", "L", "XL"], APPAREL_WIDE),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Hood up", ratio: "4:5", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Seam tape", ratio: "1:1", image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "4:5", image: "/images/products/fenwick-nylon-anorak.jpg" },
+      { label: "Hood up", ratio: "4:5", image: "/images/products/fenwick-nylon-anorak.jpg" },
+      { label: "Seam tape", ratio: "1:1", image: "/images/products/fenwick-nylon-anorak.jpg" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/fenwick-nylon-anorak.jpg" },
     ],
     summary:
       "A half-zip anorak in coated ripstop with fully taped seams and a single kangaroo pocket across the front.",
