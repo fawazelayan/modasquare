@@ -8,14 +8,14 @@
 
 @theme {
   /* --- 2. Colour palette & roles ------------------------------------- */
-  --color-alabaster: #fbf9f5; /* Atelier Alabaster - primary canvas */
-  --color-silk: #ffffff; /* Pure Silk - elevated surfaces */
+  --color-alabaster: #ffffff; /* Atelier Alabaster - primary canvas (pure crisp white) */
+  --color-silk: #fbfaf8; /* Pure Silk - elevated surfaces */
   --color-obsidian: #121214; /* Obsidian Slate - primary type, rules, CTAs */
   --color-obsidian-tint: #222226; /* Primary CTA hover fill */
   --color-taupe: #706c66; /* Smoked Taupe - secondary type, metadata */
   --color-ochre: #9e7d4e; /* Deep Ochre - the single accent */
 
-  /* --- Semantic surface aliases (light is the authored default) ------ */
+  /* --- Semantic surface aliases (pure white canvas with obsidian text) - */
   --color-canvas: var(--color-alabaster);
   --color-surface: var(--color-silk);
   --color-ink: var(--color-obsidian);
@@ -26,8 +26,8 @@
   --color-hairline-strong: rgba(18, 18, 20, 0.16);
   --color-wireframe: rgba(18, 18, 20, 0.035);
   --color-wireframe-rule: rgba(18, 18, 20, 0.06);
-  --color-scrim: rgba(18, 18, 20, 0.32);
-  --color-frost: rgba(251, 249, 245, 0.85);
+  --color-scrim: rgba(18, 18, 20, 0.35);
+  --color-frost: rgba(255, 255, 255, 0.88);
 
   /* --- 3. Typography ------------------------------------------------- */
   --font-display: var(--font-cormorant), "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
@@ -81,30 +81,7 @@
   --z-drawer: 70;
 }
 
-/* =========================================================================
-   Dark theme. Derived from the same six tokens so the brand survives the
-   inversion: obsidian becomes canvas, alabaster becomes ink, ochre lifts
-   just enough to clear AA on a dark ground. No pure black, per DESIGN.md.
-   ========================================================================= */
 @layer base {
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --color-canvas: #121214;
-      --color-surface: #1a1a1d;
-      --color-ink: #fbf9f5;
-      --color-ink-tint: #e6e2da;
-      --color-muted: #a5a099;
-      --color-accent: #c09b62;
-      --color-hairline: rgba(251, 249, 245, 0.1);
-      --color-hairline-strong: rgba(251, 249, 245, 0.2);
-      --color-wireframe: rgba(251, 249, 245, 0.04);
-      --color-wireframe-rule: rgba(251, 249, 245, 0.07);
-      --color-scrim: rgba(6, 6, 7, 0.56);
-      --color-frost: rgba(18, 18, 20, 0.85);
-      color-scheme: dark;
-    }
-  }
-
   /* Header height as a token. The mobile header carries a second collection
      rail, so anything that sticks beneath it (the PLP filter bar) and every
      in-page anchor has to know the real number rather than guess it. */
@@ -124,12 +101,6 @@
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
     color-scheme: light;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    html {
-      color-scheme: dark;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {

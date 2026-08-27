@@ -57,10 +57,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   // Zoom is deliberately left unrestricted.
   maximumScale: 5,
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbf9f5" },
-    { media: "(prefers-color-scheme: dark)", color: "#121214" },
-  ],
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({ children }: { readonly children: React.ReactNode }) {
