@@ -36,14 +36,12 @@ const mono = Geist_Mono({
 });
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  (basePath
-    ? `https://fawazelayan.github.io${basePath}`
-    : "https://fawazelayan.github.io/modasquare");
+const siteOrigin = "https://fawazelayan.github.io";
+const fullSiteUrl = `${siteOrigin}${basePath || "/modasquare"}`;
+const ogImageUrl = `${fullSiteUrl}/og-image.png`;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(siteOrigin),
   title: {
     default: "Modasquare",
     // Every route sets its own title, so the tab always names the current view.
@@ -58,19 +56,15 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "Modasquare",
     locale: "en_US",
-    url: siteUrl,
+    url: fullSiteUrl,
     images: [
       {
-        url: `${siteUrl}/og-image.png`,
+        url: ogImageUrl,
+        secureUrl: ogImageUrl,
         width: 1200,
         height: 630,
+        type: "image/png",
         alt: "Modasquare - Atelier Fashion",
-      },
-      {
-        url: `${siteUrl}/logo-square.png`,
-        width: 600,
-        height: 600,
-        alt: "Modasquare Logo",
       },
     ],
   },
@@ -79,7 +73,7 @@ export const metadata: Metadata = {
     title: "Modasquare",
     description:
       "Structured outerwear, column tailoring and heavyweight jersey, cut for volume and made in small runs.",
-    images: [`${siteUrl}/og-image.png`],
+    images: [ogImageUrl],
   },
   icons: {
     icon: [
@@ -111,8 +105,12 @@ export default function RootLayout({ children }: { readonly children: React.Reac
         <link rel="icon" href={`${basePath}/favicon-32x32.png`} type="image/png" sizes="32x32" />
         <link rel="icon" href={`${basePath}/favicon-16x16.png`} type="image/png" sizes="16x16" />
         <link rel="apple-touch-icon" href={`${basePath}/apple-touch-icon.png`} sizes="180x180" />
-        <meta property="og:image" content={`${siteUrl}/og-image.png`} />
-        <meta name="twitter:image" content={`${siteUrl}/og-image.png`} />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:image:secure_url" content={ogImageUrl} />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:image" content={ogImageUrl} />
       </head>
       <body>
         <CartProvider>
