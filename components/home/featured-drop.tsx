@@ -1,6 +1,9 @@
+"use client";
+
 import { ProductCard } from "@/components/plp/product-card";
-import { ButtonLink } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
+import { openDepartmentMenu } from "@/components/site/department-droplist";
 import { FEATURED_DROP_SLUGS, getProducts } from "@/lib/catalog";
 
 /**
@@ -33,9 +36,14 @@ export function FeaturedDrop() {
               Four pieces released together. Sizes are held for seven days, then the run
               closes.
             </p>
-            <ButtonLink href="/women" variant="secondary" className="mt-7">
+            <Button
+              type="button"
+              variant="secondary"
+              className="mt-7"
+              onClick={openDepartmentMenu}
+            >
               Shop the collection
-            </ButtonLink>
+            </Button>
           </Reveal>
 
           {/* The rail bleeds into the right gutter so the last tile is clipped

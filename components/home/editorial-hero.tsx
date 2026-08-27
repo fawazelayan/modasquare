@@ -1,5 +1,8 @@
-import { ButtonLink } from "@/components/ui/button";
+"use client";
+
+import { Button, ButtonLink } from "@/components/ui/button";
 import { Frame } from "@/components/ui/frame";
+import { openDepartmentMenu } from "@/components/site/department-droplist";
 
 /**
  * Editorial hero.
@@ -57,9 +60,14 @@ export function EditorialHero() {
               className="reveal mt-9 flex flex-wrap items-center gap-3"
               style={{ ["--reveal-index" as string]: 3 }}
             >
-              <ButtonLink href="/women" variant="primary" size="lg">
+              <Button
+                type="button"
+                variant="primary"
+                size="lg"
+                onClick={openDepartmentMenu}
+              >
                 Shop the collection
-              </ButtonLink>
+              </Button>
               <ButtonLink href="#featured-drop" variant="secondary" size="lg">
                 See the drop
               </ButtonLink>

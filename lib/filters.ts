@@ -25,6 +25,7 @@ export interface PlpFilters {
   readonly sizes: ReadonlyArray<SizeLabel>;
   readonly fits: ReadonlyArray<FitLabel>;
   readonly bands: ReadonlyArray<PriceBandId>;
+  readonly sub?: string;
   readonly view: GridView;
 }
 
@@ -32,6 +33,7 @@ export const PARAM = {
   size: "size",
   fit: "fit",
   price: "price",
+  sub: "sub",
   view: "view",
 } as const;
 
@@ -61,11 +63,15 @@ export function parseFilters(params: RawParams): PlpFilters {
     PRICE_BANDS.some((band) => band.id === value),
   );
 
+  const rawSub = params[PARAM.sub] || params.type;
+  const subValue = Array.isArray(rawSub) ? rawSub[0] : rawSub;
+  const sub = typeof subValue === "string" && subValue.trim().length > 0 ? subValue.trim().toLowerCase() : undefined;
+
   const rawView = params[PARAM.view];
   const viewValue = Array.isArray(rawView) ? rawView[0] : rawView;
   const view: GridView = viewValue === "dense" ? "dense" : DEFAULT_VIEW;
 
-  return { sizes, fits, bands, view };
+  return { sizes, fits, bands, sub, view };
 }
 
 /**
@@ -79,13 +85,19 @@ export function serialiseFilters(filters: PlpFilters): string {
   if (filters.sizes.length > 0) params.set(PARAM.size, [...filters.sizes].join(","));
   if (filters.fits.length > 0) params.set(PARAM.fit, [...filters.fits].join(","));
   if (filters.bands.length > 0) params.set(PARAM.price, [...filters.bands].join(","));
+  if (filters.sub && filters.sub !== "all") params.set(PARAM.sub, filters.sub);
   if (filters.view !== DEFAULT_VIEW) params.set(PARAM.view, filters.view);
 
   return params.toString();
 }
 
 export function activeFilterCount(filters: PlpFilters): number {
-  return filters.sizes.length + filters.fits.length + filters.bands.length;
+  return (
+    filters.sizes.length +
+    filters.fits.length +
+    filters.bands.length +
+    (filters.sub && filters.sub !== "all" ? 1 : 0)
+  );
 }
 
 function matchesPrice(product: Product, bands: ReadonlyArray<PriceBandId>): boolean {
@@ -112,7 +124,12 @@ export function applyFilters(products: ReadonlyArray<Product>, filters: PlpFilte
 
     const fitOk = filters.fits.length === 0 || filters.fits.includes(product.fit);
 
-    return sizeOk && fitOk && matchesPrice(product, filters.bands);
+    const subOk =
+      !filters.sub ||
+      filters.sub === "all" ||
+      product.subcategory === filters.sub;
+
+    return sizeOk && fitOk && subOk && matchesPrice(product, filters.bands);
   });
 }
 

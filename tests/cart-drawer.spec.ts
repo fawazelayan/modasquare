@@ -68,29 +68,6 @@ test.describe("cart drawer", () => {
     await expect(drawer).toBeVisible();
     await expect(page.getByTestId("cart-line")).toHaveCount(1);
     await expect(page.getByTestId("cart-count")).toHaveText("1");
-
-    const tracker = page.getByTestId("shipping-tracker");
-    await expect(tracker).toBeVisible();
-
-    // The first Women piece is over the 350 threshold, so shipping is unlocked.
-    await expect(page.getByText("Complimentary shipping applied.")).toBeVisible();
-
-    const scale = await page
-      .getByTestId("shipping-progress-fill")
-      .evaluate((node) => getComputedStyle(node).transform);
-    expect(scale).not.toBe("none");
-  });
-
-  test("shows the remaining amount when the bag is under the threshold", async ({ page }) => {
-    // Aster Ribbed Tank is 130, well under the 350 free-shipping threshold.
-    await page.goto("/product/aster-ribbed-tank");
-    await settle(page);
-
-    await page.getByTestId("size-S").click();
-    await page.getByTestId("add-to-bag").click();
-
-    await expect(page.getByTestId("cart-drawer")).toBeVisible();
-    await expect(page.getByTestId("shipping-remaining")).toContainText("220");
   });
 
   test("quantity adjusters and subtotal stay in step", async ({ page }) => {

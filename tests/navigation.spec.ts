@@ -9,24 +9,35 @@ test.describe("navigation and search", () => {
     await recordLayoutShifts(page);
   });
 
-  test("the header reaches all three collections on every viewport", async ({ page }, testInfo) => {
+  test("the header reaches all three collections and subcategories through the droplist", async ({ page }) => {
     await page.goto("/");
     await settle(page);
 
-    const isMobile = testInfo.project.name === "mobile-390";
-    const prefix = isMobile ? "nav-mobile" : "nav";
+    // Click droplist trigger in header
+    const trigger = page.getByTestId("departments-trigger");
+    await expect(trigger).toBeVisible();
+    await trigger.click();
 
-    for (const slug of ["women", "men", "teen"] as const) {
-      await expect(page.getByTestId(`${prefix}-${slug}`)).toBeVisible();
+    // Verify droplist panel opens with MEN, WOMEN, KIDS tabs
+    const panel = page.getByTestId("departments-droplist-panel");
+    await expect(panel).toBeVisible();
+
+    for (const slug of ["men", "women", "teen"] as const) {
+      await expect(page.getByTestId(`dept-tab-${slug}`)).toBeVisible();
     }
 
-    await page.getByTestId(`${prefix}-men`).click();
-    await page.waitForURL(/\/men\/?$/);
+    // Switch to MEN tab and check subcategory links
+    await page.getByTestId("dept-tab-men").click();
+    await expect(page.getByTestId("sublink-men-tops")).toBeVisible();
+    await expect(page.getByTestId("sublink-men-jeans")).toBeVisible();
+
+    // Click Tops & Shirts under Men
+    await page.getByTestId("sublink-men-tops").click();
+    await page.waitForURL(/\/men\/?\?sub=tops/);
     await expect(page.getByRole("heading", { level: 1, name: "Men" })).toBeVisible();
-    await expect(page.getByTestId(`${prefix}-men`)).toHaveAttribute("aria-current", "page");
   });
 
-  test("the desktop navigation stays on one line inside the height cap", async ({
+  test("the desktop navigation stays inside the height cap", async ({
     page,
   }, testInfo) => {
     test.skip(testInfo.project.name === "mobile-390", "The cap is a desktop rule.");
@@ -40,16 +51,6 @@ test.describe("navigation and search", () => {
 
     // AGENTS.md caps the desktop header at 80px.
     expect(height).toBeLessThanOrEqual(80);
-
-    const navLines = await page.evaluate(() => {
-      // Only the rendered rail counts. The mobile collection row is in the DOM
-      // at every width and collapses to display:none above md.
-      const links = Array.from(document.querySelectorAll('[data-testid^="nav-"]')).filter(
-        (link) => link.getClientRects().length > 0,
-      );
-      return new Set(links.map((link) => Math.round(link.getBoundingClientRect().top))).size;
-    });
-    expect(navLines).toBe(1);
   });
 
   test("search opens, matches, and closes on Escape", async ({ page }, testInfo) => {
@@ -124,7 +125,7 @@ test.describe("navigation and search", () => {
     await expect(page).toHaveTitle("Modasquare");
 
     await page.goto("/teen");
-    await expect(page).toHaveTitle("Teen | Modasquare");
+    await expect(page).toHaveTitle("Kids | Modasquare");
 
     await page.goto("/product/kite-parachute-pant");
     await expect(page).toHaveTitle("Kite Parachute Pant | Modasquare");

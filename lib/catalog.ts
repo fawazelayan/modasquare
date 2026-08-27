@@ -9,6 +9,8 @@ export type AspectRatio = "3:4" | "4:5" | "16:9" | "1:1" | "9:16";
 
 export type CategorySlug = "women" | "men" | "teen";
 
+export type SubcategorySlug = "tops" | "jeans" | "trousers" | "outerwear" | "knits" | "sweats";
+
 export type SizeLabel = "XS" | "S" | "M" | "L" | "XL" | "XXL";
 
 export type FitLabel = "Oversized" | "Relaxed" | "Tailored" | "Cropped";
@@ -53,6 +55,7 @@ export interface Product {
   readonly specs: ReadonlyArray<SpecPanel>;
   /** Slugs rendered by the Complete the Look module on the PDP. */
   readonly pairsWith: ReadonlyArray<string>;
+  readonly subcategory?: SubcategorySlug;
   readonly isNew?: boolean;
 }
 
@@ -66,13 +69,6 @@ export interface Category {
 
 export const CATEGORIES: ReadonlyArray<Category> = [
   {
-    slug: "women",
-    label: "Women",
-    headline: "Women",
-    note: "Structured outerwear, column tailoring and heavyweight jersey cut for volume.",
-    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1600",
-  },
-  {
     slug: "men",
     label: "Men",
     headline: "Men",
@@ -80,11 +76,79 @@ export const CATEGORIES: ReadonlyArray<Category> = [
     image: "https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=1600",
   },
   {
+    slug: "women",
+    label: "Women",
+    headline: "Women",
+    note: "Structured outerwear, column tailoring and heavyweight jersey cut for volume.",
+    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1600",
+  },
+  {
     slug: "teen",
-    label: "Teen",
-    headline: "Teen",
+    label: "Kids",
+    headline: "Kids",
     note: "Lighter constructions, wider silhouettes and technical nylon in the same palette.",
     image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&q=80&w=1600",
+  },
+];
+
+export interface SubcategoryItem {
+  readonly slug: SubcategorySlug | "all";
+  readonly label: string;
+  readonly query: string;
+}
+
+export interface Department {
+  readonly slug: CategorySlug;
+  readonly label: string;
+  readonly headline: string;
+  readonly note: string;
+  readonly subcategories: ReadonlyArray<SubcategoryItem>;
+}
+
+export const DEPARTMENTS: ReadonlyArray<Department> = [
+  {
+    slug: "men",
+    label: "Men",
+    headline: "Men's Atelier",
+    note: "Utility layers, pleated trousers and loomstate denim built to hold their shape.",
+    subcategories: [
+      { slug: "all", label: "All Men", query: "" },
+      { slug: "tops", label: "Tops & Shirts", query: "sub=tops" },
+      { slug: "jeans", label: "Jeans & Denim", query: "sub=jeans" },
+      { slug: "trousers", label: "Trousers & Pants", query: "sub=trousers" },
+      { slug: "outerwear", label: "Jackets & Outerwear", query: "sub=outerwear" },
+      { slug: "knits", label: "Knits & Sweaters", query: "sub=knits" },
+      { slug: "sweats", label: "Sweats & Hoodies", query: "sub=sweats" },
+    ],
+  },
+  {
+    slug: "women",
+    label: "Women",
+    headline: "Women's Atelier",
+    note: "Structured outerwear, column tailoring and heavyweight jersey cut for volume.",
+    subcategories: [
+      { slug: "all", label: "All Women", query: "" },
+      { slug: "tops", label: "Tops & Tanks", query: "sub=tops" },
+      { slug: "jeans", label: "Jeans & Skirts", query: "sub=jeans" },
+      { slug: "trousers", label: "Trousers & Tailoring", query: "sub=trousers" },
+      { slug: "outerwear", label: "Jackets & Outerwear", query: "sub=outerwear" },
+      { slug: "knits", label: "Knits & Sweaters", query: "sub=knits" },
+      { slug: "sweats", label: "Sweats & Hoodies", query: "sub=sweats" },
+    ],
+  },
+  {
+    slug: "teen",
+    label: "Kids",
+    headline: "Kids & Youth",
+    note: "Lighter constructions, wider silhouettes and technical nylon in the same palette.",
+    subcategories: [
+      { slug: "all", label: "All Kids", query: "" },
+      { slug: "tops", label: "Graphic Tees & Tops", query: "sub=tops" },
+      { slug: "jeans", label: "Baggy Jeans & Denim", query: "sub=jeans" },
+      { slug: "trousers", label: "Parachute Pants", query: "sub=trousers" },
+      { slug: "outerwear", label: "Jackets & Windbreakers", query: "sub=outerwear" },
+      { slug: "sweats", label: "Fleeces & Sweats", query: "sub=sweats" },
+    ],
   },
 ];
 
@@ -125,6 +189,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   /* ------------------------------------------------------------------ Women */
   {
     slug: "anvers-cropped-bomber",
+    subcategory: "outerwear",
     name: "Anvers Cropped Bomber",
     line: "Atelier Series 04",
     category: "women",
@@ -172,6 +237,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "sablon-wool-trouser",
+    subcategory: "trousers",
     name: "Sablon Wool Trouser",
     line: "Atelier Series 04",
     category: "women",
@@ -214,6 +280,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "meridian-boxy-knit",
+    subcategory: "knits",
     name: "Meridian Boxy Knit",
     line: "Core Atelier",
     category: "women",
@@ -256,6 +323,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "kessel-zip-hoodie",
+    subcategory: "sweats",
     name: "Kessel Zip Hoodie",
     line: "Heavy Jersey",
     category: "women",
@@ -266,8 +334,8 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "L", "XL"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Hood", ratio: "3:4", image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Hood", ratio: "3:4", image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80&w=1200" },
       { label: "Cuff", ratio: "1:1", image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1200" },
       { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
@@ -298,6 +366,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "petra-denim-column-skirt",
+    subcategory: "jeans",
     name: "Petra Denim Column Skirt",
     line: "Atelier Series 04",
     category: "women",
@@ -308,8 +377,8 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "M", "L"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Back", ratio: "3:4", image: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Back", ratio: "3:4", image: "https://images.unsplash.com/photo-1581044777550-4cfa60707c03?auto=format&fit=crop&q=80&w=1200" },
       { label: "Hem", ratio: "1:1", image: "https://images.unsplash.com/photo-1582552938357-32b906df40cb?auto=format&fit=crop&q=80&w=1200" },
       { label: "Selvedge", ratio: "1:1", image: "https://images.unsplash.com/photo-1582552938357-32b906df40cb?auto=format&fit=crop&q=80&w=1200" },
     ],
@@ -341,6 +410,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "nord-quilted-liner",
+    subcategory: "outerwear",
     name: "Nord Quilted Liner",
     line: "Outer Atelier",
     category: "women",
@@ -351,8 +421,8 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Open", ratio: "4:5", image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Open", ratio: "4:5", image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&q=80&w=1200" },
       { label: "Quilting", ratio: "1:1", image: "https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&q=80&w=1200" },
       { label: "Lining", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
     ],
@@ -383,6 +453,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "aster-ribbed-tank",
+    subcategory: "tops",
     name: "Aster Ribbed Tank",
     line: "Core Atelier",
     category: "women",
@@ -425,6 +496,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "halden-cargo-trouser",
+    subcategory: "trousers",
     name: "Halden Cargo Trouser",
     line: "Utility Atelier",
     category: "women",
@@ -467,6 +539,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "lumen-sheer-layer-top",
+    subcategory: "tops",
     name: "Lumen Sheer Layer Top",
     line: "Atelier Series 04",
     category: "women",
@@ -509,6 +582,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "vestry-poplin-overshirt",
+    subcategory: "tops",
     name: "Vestry Poplin Overshirt",
     line: "Core Atelier",
     category: "women",
@@ -553,6 +627,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   /* -------------------------------------------------------------------- Men */
   {
     slug: "halden-utility-overshirt",
+    subcategory: "tops",
     name: "Halden Utility Overshirt",
     line: "Utility Atelier",
     category: "men",
@@ -563,10 +638,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XXL"], APPAREL_WIDE),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Back", ratio: "3:4", image: "https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Pocket", ratio: "1:1", image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "3:4", image: "/images/products/halden-utility-overshirt.jpg" },
+      { label: "Back", ratio: "3:4", image: "/images/products/halden-utility-overshirt.jpg" },
+      { label: "Pocket", ratio: "1:1", image: "/images/products/halden-utility-overshirt.jpg" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/halden-utility-overshirt.jpg" },
     ],
     summary:
       "A square overshirt in ventile with two chest pockets set wide. Heavy enough to wear as the outer layer into autumn.",
@@ -596,6 +671,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "brix-heavyweight-hoodie",
+    subcategory: "sweats",
     name: "Brix Heavyweight Hoodie",
     line: "Heavy Jersey",
     category: "men",
@@ -606,10 +682,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL", "XXL"], APPAREL_WIDE),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Hood", ratio: "3:4", image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Cuff", ratio: "1:1", image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "3:4", image: "/images/products/brix-heavyweight-hoodie.jpg" },
+      { label: "Hood", ratio: "3:4", image: "/images/products/brix-heavyweight-hoodie.jpg" },
+      { label: "Cuff", ratio: "1:1", image: "/images/products/brix-heavyweight-hoodie.jpg" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/brix-heavyweight-hoodie.jpg" },
     ],
     summary:
       "A 520 gsm hoodie with a three-panel hood and a flat drawcord. The body is cut wide and stops at the hip.",
@@ -638,6 +714,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "corso-pleated-trouser",
+    subcategory: "trousers",
     name: "Corso Pleated Trouser",
     line: "Atelier Series 04",
     category: "men",
@@ -648,10 +725,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL"], APPAREL_WIDE),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Side", ratio: "3:4", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Pleat", ratio: "1:1", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "3:4", image: "/images/products/corso-pleated-trouser.jpg" },
+      { label: "Side", ratio: "3:4", image: "/images/products/corso-pleated-trouser.jpg" },
+      { label: "Pleat", ratio: "1:1", image: "/images/products/corso-pleated-trouser.jpg" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/corso-pleated-trouser.jpg" },
     ],
     summary:
       "A double-pleat trouser with a wide waistband and a half-inch cuff. The flannel is milled dry so the crease holds.",
@@ -680,6 +757,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "rundle-boxy-tee",
+    subcategory: "tops",
     name: "Rundle Boxy Tee",
     line: "Core Atelier",
     category: "men",
@@ -722,6 +800,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "fenwick-nylon-anorak",
+    subcategory: "outerwear",
     name: "Fenwick Nylon Anorak",
     line: "Outer Atelier",
     category: "men",
@@ -765,6 +844,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "marlow-cable-crew",
+    subcategory: "knits",
     name: "Marlow Cable Crew",
     line: "Core Atelier",
     category: "men",
@@ -807,6 +887,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "ardent-selvedge-denim",
+    subcategory: "jeans",
     name: "Ardent Selvedge Denim",
     line: "Utility Atelier",
     category: "men",
@@ -817,10 +898,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL", "XXL"], APPAREL_WIDE),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Back", ratio: "3:4", image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Selvedge", ratio: "1:1", image: "https://images.unsplash.com/photo-1582552938357-32b906df40cb?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Hardware", ratio: "1:1", image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "3:4", image: "/images/products/ardent-selvedge-denim.jpg" },
+      { label: "Back", ratio: "3:4", image: "/images/products/ardent-selvedge-denim.jpg" },
+      { label: "Selvedge", ratio: "1:1", image: "/images/products/ardent-selvedge-denim.jpg" },
+      { label: "Hardware", ratio: "1:1", image: "/images/products/ardent-selvedge-denim.jpg" },
     ],
     summary:
       "A straight five-pocket in 14 oz loomstate denim, unwashed so the indigo settles against the way it is worn.",
@@ -849,6 +930,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "slate-track-pant",
+    subcategory: "trousers",
     name: "Slate Track Pant",
     line: "Heavy Jersey",
     category: "men",
@@ -890,9 +972,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     pairsWith: ["brix-heavyweight-hoodie", "fenwick-nylon-anorak", "rundle-boxy-tee"],
   },
 
-  /* ------------------------------------------------------------------- Teen */
+  /* ------------------------------------------------------------------- Teen / Kids */
   {
     slug: "volta-graphic-tee",
+    subcategory: "tops",
     name: "Volta Graphic Tee",
     line: "Teen Studio",
     category: "teen",
@@ -903,10 +986,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "M", "L"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Back", ratio: "4:5", image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Print", ratio: "1:1", image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "4:5", image: "/images/products/volta-graphic-tee.jpg" },
+      { label: "Detail", ratio: "4:5", image: "/images/products/volta-graphic-tee.jpg" },
+      { label: "Print", ratio: "1:1", image: "/images/products/volta-graphic-tee.jpg" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/volta-graphic-tee.jpg" },
     ],
     summary:
       "A wide tee with a discharge print at the back yoke, washed once so the hand stays soft against the skin.",
@@ -935,6 +1018,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "nyx-cropped-windbreaker",
+    subcategory: "outerwear",
     name: "Nyx Cropped Windbreaker",
     line: "Teen Studio",
     category: "teen",
@@ -945,10 +1029,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "L"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Back", ratio: "3:4", image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Zip pull", ratio: "1:1", image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "3:4", image: "/images/products/nyx-cropped-windbreaker.jpg" },
+      { label: "Back", ratio: "3:4", image: "/images/products/nyx-cropped-windbreaker.jpg" },
+      { label: "Zip pull", ratio: "1:1", image: "/images/products/nyx-cropped-windbreaker.jpg" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/nyx-cropped-windbreaker.jpg" },
     ],
     summary:
       "A short windbreaker with an elasticated hem and a stand collar. Packs into its own left-hand pocket.",
@@ -978,6 +1062,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "ridge-baggy-denim",
+    subcategory: "jeans",
     name: "Ridge Baggy Denim",
     line: "Teen Studio",
     category: "teen",
@@ -988,10 +1073,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "M", "L", "XL"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Back", ratio: "3:4", image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Hem", ratio: "1:1", image: "https://images.unsplash.com/photo-1582552938357-32b906df40cb?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1582552938357-32b906df40cb?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "3:4", image: "/images/products/ridge-baggy-denim.jpg" },
+      { label: "Back", ratio: "3:4", image: "/images/products/ridge-baggy-denim.jpg" },
+      { label: "Hem", ratio: "1:1", image: "/images/products/ridge-baggy-denim.jpg" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/ridge-baggy-denim.jpg" },
     ],
     summary:
       "A wide five-pocket in rigid denim, stone washed to a flat mid tone with no whiskering at the hip.",
@@ -1020,6 +1105,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "onda-fleece-half-zip",
+    subcategory: "sweats",
     name: "Onda Fleece Half-Zip",
     line: "Teen Studio",
     category: "teen",
@@ -1030,10 +1116,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Collar", ratio: "4:5", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Zip", ratio: "1:1", image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "4:5", image: "/images/products/onda-fleece-half-zip.jpg" },
+      { label: "Collar", ratio: "4:5", image: "/images/products/onda-fleece-half-zip.jpg" },
+      { label: "Zip", ratio: "1:1", image: "/images/products/onda-fleece-half-zip.jpg" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/onda-fleece-half-zip.jpg" },
     ],
     summary:
       "A deep half-zip in recycled polar fleece with a bound collar that stands without a wire.",
@@ -1062,6 +1148,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "kite-parachute-pant",
+    subcategory: "trousers",
     name: "Kite Parachute Pant",
     line: "Teen Studio",
     category: "teen",
@@ -1072,10 +1159,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "M", "L"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Cinched", ratio: "3:4", image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Toggle", ratio: "1:1", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "3:4", image: "/images/products/kite-parachute-pant.jpg" },
+      { label: "Cinched", ratio: "3:4", image: "/images/products/kite-parachute-pant.jpg" },
+      { label: "Toggle", ratio: "1:1", image: "/images/products/kite-parachute-pant.jpg" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/kite-parachute-pant.jpg" },
     ],
     summary:
       "A parachute pant in light taffeta with cord channels at the knee and hem, so the volume can be pulled in or left to fall.",
@@ -1104,6 +1191,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "static-boxy-sweat",
+    subcategory: "sweats",
     name: "Static Boxy Sweat",
     line: "Teen Studio",
     category: "teen",
@@ -1114,10 +1202,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "M", "L", "XL"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Back", ratio: "4:5", image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Rib", ratio: "1:1", image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Fabric", ratio: "1:1", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "4:5", image: "/images/products/static-boxy-sweat.jpg" },
+      { label: "Back", ratio: "4:5", image: "/images/products/static-boxy-sweat.jpg" },
+      { label: "Rib", ratio: "1:1", image: "/images/products/static-boxy-sweat.jpg" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/static-boxy-sweat.jpg" },
     ],
     summary:
       "A square crew sweat with set-in sleeves and a wide rib at the hem that stops the body from riding up.",
@@ -1146,6 +1234,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "dune-corduroy-shacket",
+    subcategory: "outerwear",
     name: "Dune Corduroy Shacket",
     line: "Teen Studio",
     category: "teen",
@@ -1156,10 +1245,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Open", ratio: "3:4", image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Wale", ratio: "1:1", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Lining", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "3:4", image: "/images/products/dune-corduroy-shacket.jpg" },
+      { label: "Open", ratio: "3:4", image: "/images/products/dune-corduroy-shacket.jpg" },
+      { label: "Wale", ratio: "1:1", image: "/images/products/dune-corduroy-shacket.jpg" },
+      { label: "Lining", ratio: "1:1", image: "/images/products/dune-corduroy-shacket.jpg" },
     ],
     summary:
       "An unlined shacket in eight-wale corduroy with a flannel-backed yoke and horn-look buttons.",
@@ -1188,6 +1277,7 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
   {
     slug: "pilot-mesh-layer",
+    subcategory: "tops",
     name: "Pilot Mesh Layer",
     line: "Teen Studio",
     category: "teen",
@@ -1198,10 +1288,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "L", "XL"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5", image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Layered", ratio: "4:5", image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Mesh", ratio: "1:1", image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=1200" },
-      { label: "Hem", ratio: "1:1", image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=1200" },
+      { label: "Front", ratio: "4:5", image: "/images/products/pilot-mesh-layer.jpg" },
+      { label: "Detail", ratio: "4:5", image: "/images/products/pilot-mesh-layer.jpg" },
+      { label: "Mesh", ratio: "1:1", image: "/images/products/pilot-mesh-layer.jpg" },
+      { label: "Hem", ratio: "1:1", image: "/images/products/pilot-mesh-layer.jpg" },
     ],
     summary:
       "A long-sleeved open mesh worn as a layer under jersey. Knitted flat so the openings keep their grid.",
@@ -1230,6 +1320,13 @@ export const PRODUCTS: ReadonlyArray<Product> = [
   },
 ];
 
+export const FEATURED_DROP_SLUGS: ReadonlyArray<string> = [
+  "anvers-cropped-bomber",
+  "halden-utility-overshirt",
+  "petra-denim-column-skirt",
+  "nyx-cropped-windbreaker",
+];
+
 const BY_SLUG = new Map(PRODUCTS.map((product) => [product.slug, product]));
 
 export function getProduct(slug: string): Product | undefined {
@@ -1241,21 +1338,17 @@ export function getProducts(slugs: ReadonlyArray<string>): Product[] {
 }
 
 export function getCategory(slug: string): Category | undefined {
+  if (slug === "kids") return CATEGORIES.find((category) => category.slug === "teen");
   return CATEGORIES.find((category) => category.slug === slug);
 }
 
-export function getProductsByCategory(slug: CategorySlug): Product[] {
-  return PRODUCTS.filter((product) => product.category === slug);
+export function getProductsByCategory(slug: CategorySlug | "kids"): Product[] {
+  const target = slug === "kids" ? "teen" : slug;
+  return PRODUCTS.filter((product) => product.category === target);
 }
-
-/** Homepage featured drop. Deliberately hand-picked rather than sliced. */
-export const FEATURED_DROP_SLUGS: ReadonlyArray<string> = [
-  "anvers-cropped-bomber",
-  "fenwick-nylon-anorak",
-  "nord-quilted-liner",
-  "nyx-cropped-windbreaker",
-];
 
 export function isCategorySlug(value: string): value is CategorySlug {
+  if (value === "kids") return true;
   return CATEGORIES.some((category) => category.slug === value);
 }
+

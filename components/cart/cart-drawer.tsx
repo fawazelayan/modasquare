@@ -5,6 +5,7 @@ import { useId } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowUUpLeft, Check, X } from "@phosphor-icons/react/dist/ssr";
 import { useCart } from "@/components/cart/cart-provider";
+import { openDepartmentMenu } from "@/components/site/department-droplist";
 import { Button } from "@/components/ui/button";
 import { Frame } from "@/components/ui/frame";
 import { QuantityStepper } from "@/components/ui/quantity-stepper";
@@ -43,7 +44,7 @@ export function CartDrawer() {
   return (
     <AnimatePresence>
       {isDrawerOpen ? (
-        <div className="fixed inset-0 z-[70]" data-testid="cart-drawer-root">
+        <div className="fixed inset-0 z-[70] overflow-hidden" data-testid="cart-drawer-root">
           <motion.button
             type="button"
             aria-label="Close bag"
@@ -110,57 +111,6 @@ export function CartDrawer() {
               </button>
             </header>
 
-            {/* ------------------------------------------ shipping tracker */}
-            {lines.length > 0 ? (
-              <div
-                className="border-b border-[var(--color-hairline)] px-6 py-4"
-                data-testid="shipping-tracker"
-              >
-                <p
-                  aria-live="polite"
-                  className="flex items-center gap-2 text-[13px] leading-snug text-[var(--color-ink)]"
-                >
-                  {qualifiesForFreeShipping ? (
-                    <>
-                      {/* Redundant cue: the icon and the sentence both carry the
-                          state, so it never reads as colour alone. */}
-                      <Check
-                        aria-hidden="true"
-                        weight="bold"
-                        size={14}
-                        className="shrink-0 text-[var(--color-accent)]"
-                      />
-                      <span>Complimentary shipping applied.</span>
-                    </>
-                  ) : (
-                    <span data-testid="shipping-remaining">
-                      {`Add ${formatPrice(remainingForFreeShipping)} for complimentary shipping.`}
-                    </span>
-                  )}
-                </p>
-
-                <div
-                  className="mt-3 h-px w-full bg-[var(--color-hairline-strong)]"
-                  role="progressbar"
-                  aria-label="Progress towards complimentary shipping"
-                  aria-valuemin={0}
-                  aria-valuemax={FREE_SHIPPING_THRESHOLD}
-                  aria-valuenow={Math.min(subtotal, FREE_SHIPPING_THRESHOLD)}
-                  aria-valuetext={
-                    qualifiesForFreeShipping
-                      ? "Complimentary shipping unlocked"
-                      : `${formatPrice(remainingForFreeShipping)} remaining`
-                  }
-                >
-                  <div
-                    data-testid="shipping-progress-fill"
-                    className="h-px origin-left bg-[var(--color-ink)] transition-transform duration-500 [transition-timing-function:var(--ease-spring)]"
-                    style={{ transform: `scaleX(${shippingProgress})` }}
-                  />
-                </div>
-              </div>
-            ) : null}
-
             {/* ----------------------------------------------------- lines */}
             <div className="scroll-contained min-h-0 flex-1 overflow-y-auto">
               {lines.length === 0 ? (
@@ -185,27 +135,28 @@ export function CartDrawer() {
                         />
                       </Link>
 
-                      <div className="flex min-w-0 flex-1 flex-col gap-2">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
+                      <div className="flex min-w-0 flex-1 flex-col justify-between py-0.5">
+                        <div>
+                          <div className="flex items-baseline justify-between gap-2">
                             <Link
                               href={`/product/${line.slug}`}
                               onClick={closeDrawer}
-                              className="link-ghost block truncate text-[15px] text-[var(--color-ink)]"
+                              className="link-ghost min-w-0 flex-1 truncate text-[14px] font-medium text-[var(--color-ink)] sm:text-[15px]"
                             >
                               {line.name}
                             </Link>
-                            <p className="numeral mt-1 text-[11px] uppercase tracking-[0.14em] text-[var(--color-muted)]">
-                              {`${line.colour} / Size ${line.size}`}
+
+                            <p className="numeral shrink-0 text-right text-[13px] text-[var(--color-ink)] sm:text-[14px]">
+                              {formatPrice(line.price * line.quantity)}
                             </p>
                           </div>
 
-                          <p className="numeral shrink-0 text-[14px] text-[var(--color-ink)]">
-                            {formatPrice(line.price * line.quantity)}
+                          <p className="numeral mt-1 text-[11px] uppercase tracking-[0.14em] text-[var(--color-muted)]">
+                            {`${line.colour} / Size ${line.size}`}
                           </p>
                         </div>
 
-                        <div className="mt-1 flex items-center justify-between gap-3">
+                        <div className="mt-3 flex items-center justify-between gap-3">
                           <QuantityStepper
                             value={line.quantity}
                             label={`${line.name}, size ${line.size}`}
@@ -249,10 +200,8 @@ export function CartDrawer() {
                   <button
                     type="button"
                     onClick={restoreLine}
-                    data-testid="cart-undo-action"
-                    className="inline-flex min-h-[44px] shrink-0 items-center gap-2 text-[12px] uppercase tracking-[0.12em] text-[var(--color-muted)] hover:text-[var(--color-ink)]"
+                    className="shrink-0 text-[12px] uppercase tracking-[0.12em] text-[var(--color-ink)] underline underline-offset-4"
                   >
-                    <ArrowUUpLeft aria-hidden="true" weight="light" size={14} />
                     Undo
                   </button>
                 </div>
@@ -261,32 +210,35 @@ export function CartDrawer() {
 
             {/* ---------------------------------------------------- footer */}
             {lines.length > 0 ? (
-              <footer className="border-t border-[var(--color-hairline)] bg-[var(--color-surface)] px-6 pb-6 pt-5">
-                <div className="flex items-baseline justify-between gap-4">
-                  <span className="text-[13px] uppercase tracking-[0.12em] text-[var(--color-muted)]">
+              <footer className="border-t border-[var(--color-hairline)] bg-[var(--color-canvas)] px-6 py-5">
+                <div className="flex items-baseline justify-between text-[13px]">
+                  <span className="uppercase tracking-[0.12em] text-[var(--color-muted)]">
                     Subtotal
                   </span>
                   <span
-                    className="numeral text-[20px] text-[var(--color-ink)]"
+                    className="numeral text-[16px] text-[var(--color-ink)]"
                     data-testid="cart-subtotal"
                   >
                     {formatPrice(subtotal)}
                   </span>
                 </div>
 
-                <p className="mt-2 text-[12px] leading-relaxed text-[var(--color-muted)]">
-                  Duties and taxes are calculated at checkout.
+                <p className="mt-1.5 text-[12px] leading-relaxed text-[var(--color-muted)]">
+                  Taxes and delivery are calculated at the next step.
                 </p>
 
-                <Button
-                  variant="primary"
-                  size="lg"
-                  fullWidth
-                  className="mt-5"
-                  data-testid="express-checkout"
+                <button
+                  type="button"
+                  data-testid="checkout-button"
+                  className={
+                    "mt-4 flex min-h-[48px] w-full items-center justify-center rounded-[2px] " +
+                    "bg-[var(--color-ink)] px-6 text-[13px] font-semibold uppercase tracking-[0.14em] " +
+                    "text-[var(--color-canvas)] transition-opacity duration-200 " +
+                    "[transition-timing-function:var(--ease-quiet)] hover:opacity-90"
+                  }
                 >
-                  Express checkout
-                </Button>
+                  Proceed to checkout
+                </button>
 
                 <button
                   type="button"
@@ -311,8 +263,22 @@ export function CartDrawer() {
 function EmptyBag({ onClose }: { readonly onClose: () => void }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-5 px-8 text-center">
-      <div className="w-28">
-        <Frame ratio="3:4" label="Empty" pitch={16} />
+      <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[var(--color-surface)] text-[var(--color-ink)]">
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <path d="M16 10a4 4 0 0 1-8 0" />
+        </svg>
       </div>
 
       <div>
@@ -324,19 +290,22 @@ function EmptyBag({ onClose }: { readonly onClose: () => void }) {
         </p>
       </div>
 
-      <Link
-        href="/women"
-        onClick={onClose}
+      <button
+        type="button"
+        onClick={() => {
+          onClose();
+          openDepartmentMenu();
+        }}
         className={
           "inline-flex min-h-[44px] items-center justify-center rounded-[2px] border " +
-          "border-[var(--color-ink)] px-6 text-[13px] font-semibold uppercase tracking-[0.12em] " +
+          "border-[var(--color-ink)] px-8 text-[13px] font-semibold uppercase tracking-[0.14em] " +
           "text-[var(--color-ink)] transition-colors duration-200 " +
           "[transition-timing-function:var(--ease-quiet)] hover:bg-[var(--color-ink)] " +
           "hover:text-[var(--color-canvas)]"
         }
       >
-        Browse Women
-      </Link>
+        Browse
+      </button>
     </div>
   );
 }

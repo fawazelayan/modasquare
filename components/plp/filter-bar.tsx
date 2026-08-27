@@ -2,15 +2,23 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
-import { CaretDown, Columns, SquaresFour, X } from "@phosphor-icons/react/dist/ssr";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import {
+  CaretDown,
+  CaretRight,
+  SlidersHorizontal,
+  X,
+} from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/lib/cn";
 import {
+  DEPARTMENTS,
   FIT_OPTIONS,
   PRICE_BANDS,
   SIZE_ORDER,
   type FitLabel,
   type PriceBandId,
   type SizeLabel,
+  type SubcategorySlug,
 } from "@/lib/catalog";
 import {
   activeFilterCount,
@@ -20,22 +28,10 @@ import {
   type PlpFilters,
 } from "@/lib/filters";
 
-type FacetId = "size" | "fit" | "price";
+type FilterSection = "sub" | "size" | "fit" | "price";
 
 /**
- * Sticky filter rail.
- *
- * All state is written to the query string rather than held locally, so a
- * filtered view is a real address: it can be shared, bookmarked, and Back
- * returns to the previous selection with the scroll position intact. The rail
- * renders from the parsed filters it is handed, which means the server-rendered
- * grid and these controls can never drift apart.
- *
- * The open facet hangs off the bottom of the rail as a full-width overlay
- * rather than expanding a row in the flow. Expanding in the flow looked fine
- * until you clicked something else on the page: the panel closed on pointerdown
- * and every element below it jumped up before the click resolved, so the press
- * landed on whatever slid into its place.
+ * FilterBar with single Filter popup modal and intuitive grid switchers.
  */
 export function FilterBar({
   filters,
@@ -48,22 +44,39 @@ export function FilterBar({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [openFacet, setOpenFacet] = useState<FacetId | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const groupId = useId();
+  const [isModalOpen, setModalOpen] = useState(false);
+  const reduceMotion = useReducedMotion();
+  const modalId = useId();
+
+  // Track expanded filter tree sections inside the modal (all open by default for effortless browsing)
+  const [expandedSections, setExpandedSections] = useState<Record<FilterSection, boolean>>({
+    sub: true,
+    size: true,
+    fit: true,
+    price: true,
+  });
+
+  const toggleSection = (section: FilterSection) => {
+    setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
+
+  // Derive relevant department subcategories based on current route
+  const currentDept = DEPARTMENTS.find((d) => pathname.includes(`/${d.slug}`)) || DEPARTMENTS[0];
 
   const push = useCallback(
     (next: PlpFilters) => {
       const query = serialiseFilters(next);
-      // `replace` rather than `push`: a filter tweak is a refinement of the same
-      // view, so it should not bury the previous page under history entries.
-      // `scroll: false` keeps the customer where they were in the grid.
       router.replace(query ? `${pathname}?${query}` : pathname, {
         scroll: false,
       });
     },
     [pathname, router],
   );
+
+  const toggleSub = (value: SubcategorySlug) => {
+    const nextSub = filters.sub === value ? undefined : value;
+    push({ ...filters, sub: nextSub });
+  };
 
   const toggleSize = (value: SizeLabel) =>
     push({ ...filters, sizes: toggleValue(filters.sizes, value, SIZE_ORDER) });
@@ -83,271 +96,592 @@ export function FilterBar({
 
   const setView = (view: GridView) => push({ ...filters, view });
 
-  const clearAll = () => push({ ...filters, sizes: [], fits: [], bands: [] });
+  const clearAll = () => push({ ...filters, sizes: [], fits: [], bands: [], sub: undefined });
 
   const activeCount = activeFilterCount(filters);
 
-  // Escape closes the open facet, and a click outside the rail dismisses it.
+  // Close modal on Escape key
   useEffect(() => {
-    if (!openFacet) return;
+    if (!isModalOpen) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpenFacet(null);
-    };
-    const onPointerDown = (event: PointerEvent) => {
-      if (!containerRef.current?.contains(event.target as Node)) setOpenFacet(null);
+      if (event.key === "Escape") setModalOpen(false);
     };
 
     document.addEventListener("keydown", onKeyDown);
-    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isModalOpen]);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
     return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.removeEventListener("pointerdown", onPointerDown);
+      document.body.style.overflow = "";
     };
-  }, [openFacet]);
-
-  const facets: ReadonlyArray<{ id: FacetId; label: string; count: number }> = [
-    { id: "size", label: "Size", count: filters.sizes.length },
-    { id: "fit", label: "Fit", count: filters.fits.length },
-    { id: "price", label: "Price", count: filters.bands.length },
-  ];
-
-  const facetButtonClass = (isOpen: boolean, count: number) =>
-    cn(
-      "inline-flex min-h-[44px] items-center gap-2 rounded-[2px] border px-4",
-      "text-[12px] font-semibold uppercase tracking-[0.12em]",
-      "transition-[background-color,color,border-color] duration-200",
-      "[transition-timing-function:var(--ease-quiet)]",
-      count > 0 || isOpen
-        ? "border-[var(--color-ink)] text-[var(--color-ink)]"
-        : "border-[var(--color-hairline-strong)] text-[var(--color-muted)] hover:border-[var(--color-ink)] hover:text-[var(--color-ink)]",
-    );
-
-  const optionClass = (selected: boolean) =>
-    cn(
-      "numeral inline-flex min-h-[44px] items-center justify-center rounded-[2px] border px-4",
-      "text-[12px] uppercase tracking-[0.1em]",
-      "transition-[background-color,color,border-color] duration-200",
-      "[transition-timing-function:var(--ease-quiet)]",
-      selected
-        ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-[var(--color-canvas)]"
-        : "border-[var(--color-hairline-strong)] bg-[var(--color-canvas)] text-[var(--color-ink)] hover:border-[var(--color-ink)]",
-    );
+  }, [isModalOpen]);
 
   return (
-    <div
-      ref={containerRef}
-      className={
-        "relative sticky top-[var(--header-height)] z-[20] border-y border-[var(--color-hairline)] " +
-        "bg-[var(--color-frost)] backdrop-blur-[12px] backdrop-saturate-150"
-      }
-      data-testid="filter-bar"
-    >
-      <div className="atelier-shell">
-        <div className="flex items-center justify-between gap-4 py-3">
-          {/* Facets scroll horizontally on narrow screens rather than wrapping
-              into a second sticky row that would eat the viewport. */}
-          <div className="scroll-contained -mx-1 flex min-w-0 flex-1 items-center gap-2 overflow-x-auto px-1 py-1">
-            {facets.map((facet) => {
-              const isOpen = openFacet === facet.id;
-              return (
-                <button
-                  key={facet.id}
-                  type="button"
-                  aria-expanded={isOpen}
-                  aria-controls={`${groupId}-${facet.id}`}
-                  onClick={() => setOpenFacet(isOpen ? null : facet.id)}
-                  data-testid={`facet-${facet.id}`}
-                  className={cn(facetButtonClass(isOpen, facet.count), "shrink-0")}
-                >
-                  {facet.label}
-                  {facet.count > 0 ? (
-                    <span className="numeral text-[11px]">{`(${facet.count})`}</span>
-                  ) : null}
-                  <CaretDown
-                    aria-hidden="true"
-                    weight="light"
-                    size={12}
-                    className={cn(
-                      "transition-transform duration-300 [transition-timing-function:var(--ease-spring)]",
-                      isOpen && "rotate-180",
-                    )}
-                  />
-                </button>
-              );
-            })}
-
-            {activeCount > 0 ? (
+    <>
+      <div
+        className="relative z-[20] border-y border-[var(--color-hairline)] bg-[var(--color-canvas)]"
+        data-testid="filter-bar"
+      >
+        <div className="atelier-shell">
+          <div className="flex items-center justify-between gap-4 py-3">
+            {/* ------------------------------------------------ Left: Filter Button + Active Pills */}
+            <div className="scroll-contained -mx-1 flex min-w-0 flex-1 items-center gap-2 overflow-x-auto px-1 py-0.5">
+              {/* Single Filter Button */}
               <button
                 type="button"
-                onClick={clearAll}
-                data-testid="filter-clear"
-                className="inline-flex min-h-[44px] shrink-0 items-center gap-1.5 px-2 text-[12px] uppercase tracking-[0.12em] text-[var(--color-muted)] transition-colors duration-200 hover:text-[var(--color-ink)]"
+                onClick={() => setModalOpen(true)}
+                aria-haspopup="dialog"
+                aria-expanded={isModalOpen}
+                data-testid="filter-modal-trigger"
+                className={cn(
+                  "inline-flex min-h-[38px] shrink-0 items-center gap-2 rounded-[2px] border px-3.5",
+                  "text-[11px] font-medium uppercase tracking-[0.14em]",
+                  "transition-colors duration-150 active:scale-95",
+                  activeCount > 0
+                    ? "border-[var(--color-ink)] bg-[var(--color-surface)] text-[var(--color-ink)]"
+                    : "border-[var(--color-hairline-strong)] bg-[var(--color-canvas)] text-[var(--color-ink)] hover:border-[var(--color-ink)]",
+                )}
               >
-                <X aria-hidden="true" weight="light" size={12} />
-                Clear
+                <SlidersHorizontal aria-hidden="true" weight="regular" size={15} />
+                <span>Filters</span>
+                {activeCount > 0 ? (
+                  <span
+                    aria-hidden="true"
+                    className="numeral ml-0.5 min-w-[17px] rounded-full bg-[var(--color-ink)] px-1 text-center text-[9px] font-semibold text-[var(--color-canvas)]"
+                  >
+                    {activeCount}
+                  </span>
+                ) : null}
               </button>
-            ) : null}
-          </div>
 
-          <div className="flex shrink-0 items-center gap-4">
-            {/* The count is the feedback loop for every filter change. */}
-            <p
-              aria-live="polite"
-              className="numeral hidden text-[12px] tracking-[0.1em] text-[var(--color-muted)] sm:block"
-              data-testid="result-count"
-            >
-              {resultCount === totalCount
-                ? `${totalCount} pieces`
-                : `${resultCount} of ${totalCount}`}
-            </p>
+              {/* Active Subcategory Pill */}
+              {filters.sub && filters.sub !== "all" ? (
+                <button
+                  type="button"
+                  onClick={() => push({ ...filters, sub: undefined })}
+                  className="inline-flex min-h-[38px] shrink-0 items-center gap-1.5 rounded-[2px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface)] px-3 text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--color-ink)] hover:border-[var(--color-ink)]"
+                  title="Remove subcategory"
+                >
+                  <span className="capitalize">{filters.sub}</span>
+                  <X aria-hidden="true" weight="bold" size={10} className="text-[var(--color-muted)]" />
+                </button>
+              ) : null}
 
-            <div
-              role="group"
-              aria-label="Grid density"
-              className="flex items-center rounded-[2px] border border-[var(--color-hairline-strong)]"
-            >
-              <ViewToggle
-                isActive={filters.view === "editorial"}
-                label="Editorial view, two columns"
-                testId="view-editorial"
-                onClick={() => setView("editorial")}
+              {/* Active Size Pills */}
+              {filters.sizes.map((size) => (
+                <button
+                  key={size}
+                  type="button"
+                  onClick={() => toggleSize(size)}
+                  className="numeral inline-flex min-h-[38px] shrink-0 items-center gap-1.5 rounded-[2px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface)] px-3 text-[11px] font-medium text-[var(--color-ink)] hover:border-[var(--color-ink)]"
+                  title={`Remove size ${size}`}
+                >
+                  <span>{size}</span>
+                  <X aria-hidden="true" weight="bold" size={10} className="text-[var(--color-muted)]" />
+                </button>
+              ))}
+
+              {/* Active Fit Pills */}
+              {filters.fits.map((fit) => (
+                <button
+                  key={fit}
+                  type="button"
+                  onClick={() => toggleFit(fit)}
+                  className="inline-flex min-h-[38px] shrink-0 items-center gap-1.5 rounded-[2px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface)] px-3 text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--color-ink)] hover:border-[var(--color-ink)]"
+                  title={`Remove fit ${fit}`}
+                >
+                  <span>{fit}</span>
+                  <X aria-hidden="true" weight="bold" size={10} className="text-[var(--color-muted)]" />
+                </button>
+              ))}
+
+              {/* Active Price Band Pills */}
+              {filters.bands.map((bandId) => {
+                const band = PRICE_BANDS.find((b) => b.id === bandId);
+                if (!band) return null;
+                return (
+                  <button
+                    key={bandId}
+                    type="button"
+                    onClick={() => toggleBand(bandId)}
+                    className="inline-flex min-h-[38px] shrink-0 items-center gap-1.5 rounded-[2px] border border-[var(--color-hairline-strong)] bg-[var(--color-surface)] px-3 text-[11px] font-medium text-[var(--color-ink)] hover:border-[var(--color-ink)]"
+                    title="Remove price band"
+                  >
+                    <span>{band.label}</span>
+                    <X aria-hidden="true" weight="bold" size={10} className="text-[var(--color-muted)]" />
+                  </button>
+                );
+              })}
+
+              {/* Clear All */}
+              {activeCount > 0 ? (
+                <button
+                  type="button"
+                  onClick={clearAll}
+                  data-testid="filter-clear"
+                  className="inline-flex min-h-[38px] shrink-0 items-center gap-1 px-2 text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--color-muted)] transition-colors hover:text-[var(--color-ink)] underline underline-offset-4 decoration-[var(--color-hairline-strong)]"
+                >
+                  Reset all
+                </button>
+              ) : null}
+            </div>
+
+            {/* ------------------------------------------------ Right: Piece Count & Refined Grid Switches */}
+            <div className="flex shrink-0 items-center gap-3 sm:gap-4">
+              <p
+                aria-live="polite"
+                className="numeral hidden text-[11px] tracking-[0.1em] text-[var(--color-muted)] sm:block"
+                data-testid="result-count"
               >
-                <Columns aria-hidden="true" weight="light" size={16} />
-              </ViewToggle>
-              <ViewToggle
-                isActive={filters.view === "dense"}
-                label="Dense view, four columns"
-                testId="view-dense"
-                onClick={() => setView("dense")}
+                {resultCount === totalCount
+                  ? `${totalCount} pieces`
+                  : `${resultCount} of ${totalCount}`}
+              </p>
+
+              {/* Borderless Grid Switcher Controls */}
+              <div
+                role="group"
+                aria-label="Grid density layout"
+                className="flex items-center gap-1 bg-transparent p-0"
               >
-                <SquaresFour aria-hidden="true" weight="light" size={16} />
-              </ViewToggle>
+                {/* 1-Column / Stacked Feed View (Images under each other) */}
+                <button
+                  type="button"
+                  aria-pressed={filters.view === "editorial"}
+                  aria-label="Stacked view (images under each other)"
+                  title="Stacked view"
+                  data-testid="view-editorial"
+                  onClick={() => setView("editorial")}
+                  className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-[2px] transition-colors duration-150",
+                    filters.view === "editorial"
+                      ? "bg-black text-white"
+                      : "bg-white text-[#666666] hover:text-black hover:bg-neutral-100",
+                  )}
+                >
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <rect
+                      x="2"
+                      y="2"
+                      width="12"
+                      height="5.2"
+                      rx="0.5"
+                      stroke="currentColor"
+                      strokeWidth="1.1"
+                      fill="none"
+                    />
+                    <rect
+                      x="2"
+                      y="8.8"
+                      width="12"
+                      height="5.2"
+                      rx="0.5"
+                      stroke="currentColor"
+                      strokeWidth="1.1"
+                      fill="none"
+                    />
+                  </svg>
+                </button>
+
+                {/* 4-Column Dense Grid View */}
+                <button
+                  type="button"
+                  aria-pressed={filters.view === "dense"}
+                  aria-label="Grid view"
+                  title="Grid view"
+                  data-testid="view-dense"
+                  onClick={() => setView("dense")}
+                  className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-[2px] transition-colors duration-150",
+                    filters.view === "dense"
+                      ? "bg-black text-white"
+                      : "bg-white text-[#666666] hover:text-black hover:bg-neutral-100",
+                  )}
+                >
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <rect
+                      x="2"
+                      y="2"
+                      width="5"
+                      height="5"
+                      rx="0.5"
+                      stroke="currentColor"
+                      strokeWidth="1.1"
+                      fill="none"
+                    />
+                    <rect
+                      x="9"
+                      y="2"
+                      width="5"
+                      height="5"
+                      rx="0.5"
+                      stroke="currentColor"
+                      strokeWidth="1.1"
+                      fill="none"
+                    />
+                    <rect
+                      x="2"
+                      y="9"
+                      width="5"
+                      height="5"
+                      rx="0.5"
+                      stroke="currentColor"
+                      strokeWidth="1.1"
+                      fill="none"
+                    />
+                    <rect
+                      x="9"
+                      y="9"
+                      width="5"
+                      height="5"
+                      rx="0.5"
+                      stroke="currentColor"
+                      strokeWidth="1.1"
+                      fill="none"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ---------------------------------------------------- facet options */}
-      {/* The open panel is an overlay hung off the rail, not a block in the
-          flow. If it took up space, opening or closing a facet would push the
-          whole grid up and down, and anything the customer was about to click
-          would move out from under the pointer between press and release. */}
-      <div
-        className={
-          "absolute inset-x-0 top-full border-b border-[var(--color-hairline)] " +
-          "bg-[var(--color-canvas)] shadow-[0_1px_0_0_var(--color-hairline)]"
-        }
-        hidden={openFacet === null}
-      >
-        <div className="atelier-shell">
-          <div id={`${groupId}-size`} hidden={openFacet !== "size"} className="py-4">
-            <fieldset className={openFacet === "size" ? "panel-in" : undefined}>
-              <legend className="sr-only">Filter by size</legend>
-              <div className="flex flex-wrap gap-2">
-                {SIZE_ORDER.map((size) => {
-                  const selected = filters.sizes.includes(size);
-                  return (
-                    <button
-                      key={size}
-                      type="button"
-                      aria-pressed={selected}
-                      onClick={() => toggleSize(size)}
-                      data-testid={`filter-size-${size}`}
-                      className={optionClass(selected)}
-                    >
-                      {size}
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="mt-3 text-[13px] text-[var(--color-muted)]">
-                Sizes shown are the ones currently on the shelf.
-              </p>
-            </fieldset>
-          </div>
+      {/* ---------------------------------------------------- Pop-up Filter Tree Modal */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={`${modalId}-title`}
+            className="fixed inset-0 z-[80] flex items-center justify-center p-4"
+          >
+            {/* Backdrop Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              onClick={() => setModalOpen(false)}
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              aria-hidden="true"
+            />
 
-          <div id={`${groupId}-fit`} hidden={openFacet !== "fit"} className="py-4">
-            <fieldset className={openFacet === "fit" ? "panel-in" : undefined}>
-              <legend className="sr-only">Filter by fit</legend>
-              <div className="flex flex-wrap gap-2">
-                {FIT_OPTIONS.map((fit) => {
-                  const selected = filters.fits.includes(fit);
-                  return (
-                    <button
-                      key={fit}
-                      type="button"
-                      aria-pressed={selected}
-                      onClick={() => toggleFit(fit)}
-                      data-testid={`filter-fit-${fit}`}
-                      className={optionClass(selected)}
-                    >
-                      {fit}
-                    </button>
-                  );
-                })}
-              </div>
-            </fieldset>
-          </div>
+            {/* Modal Dialog (wont fill the whole screen) */}
+            <motion.div
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 8 }}
+              animate={reduceMotion ? { opacity: 1 } : { opacity: 1, scale: 1, y: 0 }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.96, y: 8 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              className={cn(
+                "relative z-10 flex max-h-[85vh] w-full max-w-[28rem] flex-col rounded-[2px]",
+                "border border-[var(--color-hairline-strong)] bg-[var(--color-canvas)] shadow-2xl",
+              )}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-[var(--color-hairline)] px-6 py-4">
+                <div className="flex items-center gap-2">
+                  <h2
+                    id={`${modalId}-title`}
+                    className="font-sans text-[14px] font-semibold uppercase tracking-[0.16em] text-[var(--color-ink)]"
+                  >
+                    Filters
+                  </h2>
+                  {activeCount > 0 ? (
+                    <span className="numeral rounded-full bg-[var(--color-ink)] px-2 py-0.5 text-[10px] font-bold text-[var(--color-canvas)]">
+                      {activeCount}
+                    </span>
+                  ) : null}
+                </div>
 
-          <div id={`${groupId}-price`} hidden={openFacet !== "price"} className="py-4">
-            <fieldset className={openFacet === "price" ? "panel-in" : undefined}>
-              <legend className="sr-only">Filter by price</legend>
-              <div className="flex flex-wrap gap-2">
-                {PRICE_BANDS.map((band) => {
-                  const selected = filters.bands.includes(band.id);
-                  return (
-                    <button
-                      key={band.id}
-                      type="button"
-                      aria-pressed={selected}
-                      onClick={() => toggleBand(band.id)}
-                      data-testid={`filter-price-${band.id}`}
-                      className={optionClass(selected)}
-                    >
-                      {band.label}
-                    </button>
-                  );
-                })}
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(false)}
+                  aria-label="Close filters"
+                  className="-mr-1 flex h-8 w-8 items-center justify-center rounded-[2px] text-[var(--color-muted)] transition-colors hover:text-[var(--color-ink)]"
+                >
+                  <X aria-hidden="true" weight="bold" size={18} />
+                </button>
               </div>
-            </fieldset>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
-function ViewToggle({
-  isActive,
-  label,
-  testId,
-  onClick,
-  children,
-}: {
-  readonly isActive: boolean;
-  readonly label: string;
-  readonly testId: string;
-  readonly onClick: () => void;
-  readonly children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      // A toggle, not a link: `aria-pressed` states which density is live.
-      aria-pressed={isActive}
-      aria-label={label}
-      data-testid={testId}
-      className={cn(
-        "flex h-11 w-11 items-center justify-center transition-[background-color,color] duration-200",
-        "[transition-timing-function:var(--ease-quiet)]",
-        isActive
-          ? "bg-[var(--color-ink)] text-[var(--color-canvas)]"
-          : "text-[var(--color-muted)] hover:text-[var(--color-ink)]",
-      )}
-    >
-      {children}
-    </button>
+              {/* Scrollable Tree Content */}
+              <div className="scroll-contained flex-1 overflow-y-auto px-6 py-5">
+                <div className="relative pl-2">
+                  {/* Vertical Tree Line */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute bottom-4 left-2 top-2 w-px bg-[var(--color-hairline-strong)]"
+                  />
+
+                  <div className="space-y-5">
+                    {/* ----------------------------- 1. Subcategories Tree Node */}
+                    <div className="relative pl-4">
+                      <div
+                        aria-hidden="true"
+                        className="absolute -left-[1px] top-3 h-px w-3 bg-[var(--color-hairline-strong)]"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => toggleSection("sub")}
+                        className="group flex w-full items-center justify-between py-1 text-left"
+                      >
+                        <span className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[var(--color-ink)]">
+                          Category
+                        </span>
+                        <span className="text-[var(--color-muted)] transition-transform duration-150 group-hover:text-[var(--color-ink)]">
+                          {expandedSections.sub ? (
+                            <CaretDown size={12} weight="regular" />
+                          ) : (
+                            <CaretRight size={12} weight="regular" />
+                          )}
+                        </span>
+                      </button>
+
+                      {expandedSections.sub && (
+                        <div className="relative mb-2 ml-1 mt-2 pl-3">
+                          <div
+                            aria-hidden="true"
+                            className="absolute bottom-2 left-0 top-1 w-px bg-[var(--color-hairline)]"
+                          />
+                          <div className="flex flex-wrap gap-1.5 py-1">
+                            {currentDept.subcategories
+                              .filter((sub) => sub.slug !== "all")
+                              .map((sub) => {
+                                const isSelected = filters.sub === sub.slug;
+                                return (
+                                  <button
+                                    key={sub.slug}
+                                    type="button"
+                                    onClick={() => toggleSub(sub.slug as SubcategorySlug)}
+                                    className={cn(
+                                      "inline-flex min-h-[34px] items-center rounded-[2px] border px-3 text-[12px] font-medium transition-colors",
+                                      isSelected
+                                        ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-[var(--color-canvas)]"
+                                        : "border-[var(--color-hairline-strong)] bg-[var(--color-surface)] text-[var(--color-ink)] hover:border-[var(--color-ink)]",
+                                    )}
+                                  >
+                                    {sub.label}
+                                  </button>
+                                );
+                              })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* ----------------------------- 2. Sizes Tree Node */}
+                    <div className="relative pl-4">
+                      <div
+                        aria-hidden="true"
+                        className="absolute -left-[1px] top-3 h-px w-3 bg-[var(--color-hairline-strong)]"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => toggleSection("size")}
+                        className="group flex w-full items-center justify-between py-1 text-left"
+                      >
+                        <span className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[var(--color-ink)]">
+                          Size
+                        </span>
+                        <span className="text-[var(--color-muted)] transition-transform duration-150 group-hover:text-[var(--color-ink)]">
+                          {expandedSections.size ? (
+                            <CaretDown size={12} weight="regular" />
+                          ) : (
+                            <CaretRight size={12} weight="regular" />
+                          )}
+                        </span>
+                      </button>
+
+                      {expandedSections.size && (
+                        <div className="relative mb-2 ml-1 mt-2 pl-3">
+                          <div
+                            aria-hidden="true"
+                            className="absolute bottom-2 left-0 top-1 w-px bg-[var(--color-hairline)]"
+                          />
+                          <div className="flex flex-wrap gap-1.5 py-1">
+                            {SIZE_ORDER.map((size) => {
+                              const isSelected = filters.sizes.includes(size);
+                              return (
+                                <button
+                                  key={size}
+                                  type="button"
+                                  onClick={() => toggleSize(size)}
+                                  className={cn(
+                                    "numeral inline-flex h-9 min-w-[40px] items-center justify-center rounded-[2px] border px-2.5 text-[12px] font-medium transition-colors",
+                                    isSelected
+                                      ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-[var(--color-canvas)]"
+                                      : "border-[var(--color-hairline-strong)] bg-[var(--color-surface)] text-[var(--color-ink)] hover:border-[var(--color-ink)]",
+                                  )}
+                                >
+                                  {size}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* ----------------------------- 3. Fit Tree Node */}
+                    <div className="relative pl-4">
+                      <div
+                        aria-hidden="true"
+                        className="absolute -left-[1px] top-3 h-px w-3 bg-[var(--color-hairline-strong)]"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => toggleSection("fit")}
+                        className="group flex w-full items-center justify-between py-1 text-left"
+                      >
+                        <span className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[var(--color-ink)]">
+                          Fit & Silhouette
+                        </span>
+                        <span className="text-[var(--color-muted)] transition-transform duration-150 group-hover:text-[var(--color-ink)]">
+                          {expandedSections.fit ? (
+                            <CaretDown size={12} weight="regular" />
+                          ) : (
+                            <CaretRight size={12} weight="regular" />
+                          )}
+                        </span>
+                      </button>
+
+                      {expandedSections.fit && (
+                        <div className="relative mb-2 ml-1 mt-2 pl-3">
+                          <div
+                            aria-hidden="true"
+                            className="absolute bottom-2 left-0 top-1 w-px bg-[var(--color-hairline)]"
+                          />
+                          <div className="flex flex-wrap gap-1.5 py-1">
+                            {FIT_OPTIONS.map((fit) => {
+                              const isSelected = filters.fits.includes(fit);
+                              return (
+                                <button
+                                  key={fit}
+                                  type="button"
+                                  onClick={() => toggleFit(fit)}
+                                  className={cn(
+                                    "inline-flex min-h-[34px] items-center rounded-[2px] border px-3 text-[12px] font-medium transition-colors",
+                                    isSelected
+                                      ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-[var(--color-canvas)]"
+                                      : "border-[var(--color-hairline-strong)] bg-[var(--color-surface)] text-[var(--color-ink)] hover:border-[var(--color-ink)]",
+                                  )}
+                                >
+                                  {fit}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* ----------------------------- 4. Price Band Tree Node */}
+                    <div className="relative pl-4">
+                      <div
+                        aria-hidden="true"
+                        className="absolute -left-[1px] top-3 h-px w-3 bg-[var(--color-hairline-strong)]"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => toggleSection("price")}
+                        className="group flex w-full items-center justify-between py-1 text-left"
+                      >
+                        <span className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[var(--color-ink)]">
+                          Price
+                        </span>
+                        <span className="text-[var(--color-muted)] transition-transform duration-150 group-hover:text-[var(--color-ink)]">
+                          {expandedSections.price ? (
+                            <CaretDown size={12} weight="regular" />
+                          ) : (
+                            <CaretRight size={12} weight="regular" />
+                          )}
+                        </span>
+                      </button>
+
+                      {expandedSections.price && (
+                        <div className="relative mb-2 ml-1 mt-2 pl-3">
+                          <div
+                            aria-hidden="true"
+                            className="absolute bottom-2 left-0 top-1 w-px bg-[var(--color-hairline)]"
+                          />
+                          <div className="flex flex-wrap gap-1.5 py-1">
+                            {PRICE_BANDS.map((band) => {
+                              const isSelected = filters.bands.includes(band.id);
+                              return (
+                                <button
+                                  key={band.id}
+                                  type="button"
+                                  onClick={() => toggleBand(band.id)}
+                                  className={cn(
+                                    "inline-flex min-h-[34px] items-center rounded-[2px] border px-3 text-[12px] font-medium transition-colors",
+                                    isSelected
+                                      ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-[var(--color-canvas)]"
+                                      : "border-[var(--color-hairline-strong)] bg-[var(--color-surface)] text-[var(--color-ink)] hover:border-[var(--color-ink)]",
+                                  )}
+                                >
+                                  {band.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Footer Actions */}
+              <div className="flex items-center justify-between border-t border-[var(--color-hairline)] bg-[var(--color-surface)] px-6 py-4">
+                <button
+                  type="button"
+                  onClick={clearAll}
+                  disabled={activeCount === 0}
+                  className="text-[12px] font-medium uppercase tracking-[0.12em] text-[var(--color-muted)] transition-colors hover:text-[var(--color-ink)] disabled:opacity-40 disabled:hover:text-[var(--color-muted)]"
+                >
+                  Reset all
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(false)}
+                  className="inline-flex min-h-[44px] items-center justify-center rounded-[2px] border border-[var(--color-ink)] bg-[var(--color-ink)] px-6 text-[13px] font-semibold uppercase tracking-[0.12em] text-[var(--color-canvas)] transition-transform active:scale-95"
+                >
+                  {resultCount === totalCount
+                    ? `Show all (${resultCount})`
+                    : `Show ${resultCount} pieces`}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
