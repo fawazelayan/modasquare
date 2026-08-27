@@ -35,8 +35,15 @@ const mono = Geist_Mono({
   display: "swap",
 });
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (basePath
+    ? `https://fawazelayan.github.io${basePath}`
+    : "https://fawazelayan.github.io/modasquare");
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://modasquare.com"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Modasquare",
     // Every route sets its own title, so the tab always names the current view.
@@ -51,15 +58,16 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "Modasquare",
     locale: "en_US",
+    url: siteUrl,
     images: [
       {
-        url: "/og-image.png",
+        url: `${siteUrl}/og-image.png`,
         width: 1200,
         height: 630,
         alt: "Modasquare - Atelier Fashion",
       },
       {
-        url: "/logo-square.png",
+        url: `${siteUrl}/logo-square.png`,
         width: 600,
         height: 600,
         alt: "Modasquare Logo",
@@ -71,18 +79,19 @@ export const metadata: Metadata = {
     title: "Modasquare",
     description:
       "Structured outerwear, column tailoring and heavyweight jersey, cut for volume and made in small runs.",
-    images: ["/og-image.png"],
+    images: [`${siteUrl}/og-image.png`],
   },
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
-      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
-      { url: "/icon.png", type: "image/png", sizes: "32x32" },
+      { url: `${basePath}/favicon.ico`, sizes: "any" },
+      { url: `${basePath}/favicon-32x32.png`, type: "image/png", sizes: "32x32" },
+      { url: `${basePath}/favicon-16x16.png`, type: "image/png", sizes: "16x16" },
+      { url: `${basePath}/icon.png`, type: "image/png", sizes: "32x32" },
     ],
     apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      { url: `${basePath}/apple-touch-icon.png`, sizes: "180x180", type: "image/png" },
     ],
+    shortcut: [`${basePath}/favicon.ico`],
   },
 };
 
@@ -97,6 +106,14 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { readonly children: React.ReactNode }) {
   return (
     <html lang="en-GB" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
+      <head>
+        <link rel="icon" href={`${basePath}/favicon.ico`} sizes="any" />
+        <link rel="icon" href={`${basePath}/favicon-32x32.png`} type="image/png" sizes="32x32" />
+        <link rel="icon" href={`${basePath}/favicon-16x16.png`} type="image/png" sizes="16x16" />
+        <link rel="apple-touch-icon" href={`${basePath}/apple-touch-icon.png`} sizes="180x180" />
+        <meta property="og:image" content={`${siteUrl}/og-image.png`} />
+        <meta name="twitter:image" content={`${siteUrl}/og-image.png`} />
+      </head>
       <body>
         <CartProvider>
           <a

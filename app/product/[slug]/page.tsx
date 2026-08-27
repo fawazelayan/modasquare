@@ -27,9 +27,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!product) return { title: "Piece not found" };
 
+  const firstImage = product.gallery[0]?.image;
+
   return {
     title: product.name,
     description: product.summary,
+    openGraph: {
+      title: `${product.name} | Modasquare`,
+      description: product.summary,
+      images: firstImage ? [{ url: firstImage, alt: product.name }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${product.name} | Modasquare`,
+      description: product.summary,
+      images: firstImage ? [firstImage] : undefined,
+    },
   };
 }
 
