@@ -638,10 +638,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XXL"], APPAREL_WIDE),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "/images/products/halden-utility-overshirt.jpg" },
-      { label: "Back", ratio: "3:4", image: "/images/products/halden-utility-overshirt.jpg" },
-      { label: "Pocket", ratio: "1:1", image: "/images/products/halden-utility-overshirt.jpg" },
-      { label: "Fabric", ratio: "1:1", image: "/images/products/halden-utility-overshirt.jpg" },
+      { label: "Front", ratio: "3:4", image: "/images/products/halden-utility-overshirt.webp" },
+      { label: "Back", ratio: "3:4", image: "/images/products/halden-utility-overshirt.webp" },
+      { label: "Pocket", ratio: "1:1", image: "/images/products/halden-utility-overshirt.webp" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/halden-utility-overshirt.webp" },
     ],
     summary:
       "A square overshirt in ventile with two chest pockets set wide. Heavy enough to wear as the outer layer into autumn.",
@@ -682,10 +682,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL", "XXL"], APPAREL_WIDE),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "/images/products/brix-heavyweight-hoodie.jpg" },
-      { label: "Hood", ratio: "3:4", image: "/images/products/brix-heavyweight-hoodie.jpg" },
-      { label: "Cuff", ratio: "1:1", image: "/images/products/brix-heavyweight-hoodie.jpg" },
-      { label: "Fabric", ratio: "1:1", image: "/images/products/brix-heavyweight-hoodie.jpg" },
+      { label: "Front", ratio: "3:4", image: "/images/products/brix-heavyweight-hoodie.webp" },
+      { label: "Hood", ratio: "3:4", image: "/images/products/brix-heavyweight-hoodie.webp" },
+      { label: "Cuff", ratio: "1:1", image: "/images/products/brix-heavyweight-hoodie.webp" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/brix-heavyweight-hoodie.webp" },
     ],
     summary:
       "A 520 gsm hoodie with a three-panel hood and a flat drawcord. The body is cut wide and stops at the hip.",
@@ -725,10 +725,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL"], APPAREL_WIDE),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "/images/products/corso-pleated-trouser.jpg" },
-      { label: "Side", ratio: "3:4", image: "/images/products/corso-pleated-trouser.jpg" },
-      { label: "Pleat", ratio: "1:1", image: "/images/products/corso-pleated-trouser.jpg" },
-      { label: "Fabric", ratio: "1:1", image: "/images/products/corso-pleated-trouser.jpg" },
+      { label: "Front", ratio: "3:4", image: "/images/products/corso-pleated-trouser.webp" },
+      { label: "Side", ratio: "3:4", image: "/images/products/corso-pleated-trouser.webp" },
+      { label: "Pleat", ratio: "1:1", image: "/images/products/corso-pleated-trouser.webp" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/corso-pleated-trouser.webp" },
     ],
     summary:
       "A double-pleat trouser with a wide waistband and a half-inch cuff. The flannel is milled dry so the crease holds.",
@@ -768,10 +768,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL", "XXL"], APPAREL_WIDE),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5", image: "/images/products/rundle-boxy-tee.jpg" },
-      { label: "Back", ratio: "4:5", image: "/images/products/rundle-boxy-tee.jpg" },
-      { label: "Collar", ratio: "1:1", image: "/images/products/rundle-boxy-tee.jpg" },
-      { label: "Fabric", ratio: "1:1", image: "/images/products/rundle-boxy-tee.jpg" },
+      { label: "Front", ratio: "4:5", image: "/images/products/rundle-boxy-tee.webp" },
+      { label: "Back", ratio: "4:5", image: "/images/products/rundle-boxy-tee.webp" },
+      { label: "Collar", ratio: "1:1", image: "/images/products/rundle-boxy-tee.webp" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/rundle-boxy-tee.webp" },
     ],
     summary:
       "A tubular-knit tee with no side seams, so the body stays square through the wash. Ribbed collar set by hand.",
@@ -811,10 +811,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["M", "L", "XL"], APPAREL_WIDE),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5", image: "/images/products/fenwick-nylon-anorak.jpg" },
-      { label: "Hood up", ratio: "4:5", image: "/images/products/fenwick-nylon-anorak.jpg" },
-      { label: "Seam tape", ratio: "1:1", image: "/images/products/fenwick-nylon-anorak.jpg" },
-      { label: "Fabric", ratio: "1:1", image: "/images/products/fenwick-nylon-anorak.jpg" },
+      { label: "Front", ratio: "4:5", image: "/images/products/fenwick-nylon-anorak.webp" },
+      { label: "Hood up", ratio: "4:5", image: "/images/products/fenwick-nylon-anorak.webp" },
+      { label: "Seam tape", ratio: "1:1", image: "/images/products/fenwick-nylon-anorak.webp" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/fenwick-nylon-anorak.webp" },
     ],
     summary:
       "A half-zip anorak in coated ripstop with fully taped seams and a single kangaroo pocket across the front.",
@@ -898,10 +898,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL", "XXL"], APPAREL_WIDE),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "/images/products/ardent-selvedge-denim.jpg" },
-      { label: "Back", ratio: "3:4", image: "/images/products/ardent-selvedge-denim.jpg" },
-      { label: "Selvedge", ratio: "1:1", image: "/images/products/ardent-selvedge-denim.jpg" },
-      { label: "Hardware", ratio: "1:1", image: "/images/products/ardent-selvedge-denim.jpg" },
+      { label: "Front", ratio: "3:4", image: "/images/products/ardent-selvedge-denim.webp" },
+      { label: "Back", ratio: "3:4", image: "/images/products/ardent-selvedge-denim.webp" },
+      { label: "Selvedge", ratio: "1:1", image: "/images/products/ardent-selvedge-denim.webp" },
+      { label: "Hardware", ratio: "1:1", image: "/images/products/ardent-selvedge-denim.webp" },
     ],
     summary:
       "A straight five-pocket in 14 oz loomstate denim, unwashed so the indigo settles against the way it is worn.",
@@ -986,10 +986,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "M", "L"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5", image: "/images/products/volta-graphic-tee.jpg" },
-      { label: "Detail", ratio: "4:5", image: "/images/products/volta-graphic-tee.jpg" },
-      { label: "Print", ratio: "1:1", image: "/images/products/volta-graphic-tee.jpg" },
-      { label: "Fabric", ratio: "1:1", image: "/images/products/volta-graphic-tee.jpg" },
+      { label: "Front", ratio: "4:5", image: "/images/products/volta-graphic-tee.webp" },
+      { label: "Detail", ratio: "4:5", image: "/images/products/volta-graphic-tee.webp" },
+      { label: "Print", ratio: "1:1", image: "/images/products/volta-graphic-tee.webp" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/volta-graphic-tee.webp" },
     ],
     summary:
       "A wide tee with a discharge print at the back yoke, washed once so the hand stays soft against the skin.",
@@ -1029,10 +1029,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "L"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "/images/products/nyx-cropped-windbreaker.jpg" },
-      { label: "Back", ratio: "3:4", image: "/images/products/nyx-cropped-windbreaker.jpg" },
-      { label: "Zip pull", ratio: "1:1", image: "/images/products/nyx-cropped-windbreaker.jpg" },
-      { label: "Fabric", ratio: "1:1", image: "/images/products/nyx-cropped-windbreaker.jpg" },
+      { label: "Front", ratio: "3:4", image: "/images/products/nyx-cropped-windbreaker.webp" },
+      { label: "Back", ratio: "3:4", image: "/images/products/nyx-cropped-windbreaker.webp" },
+      { label: "Zip pull", ratio: "1:1", image: "/images/products/nyx-cropped-windbreaker.webp" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/nyx-cropped-windbreaker.webp" },
     ],
     summary:
       "A short windbreaker with an elasticated hem and a stand collar. Packs into its own left-hand pocket.",
@@ -1073,10 +1073,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "M", "L", "XL"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "/images/products/ridge-baggy-denim.jpg" },
-      { label: "Back", ratio: "3:4", image: "/images/products/ridge-baggy-denim.jpg" },
-      { label: "Hem", ratio: "1:1", image: "/images/products/ridge-baggy-denim.jpg" },
-      { label: "Fabric", ratio: "1:1", image: "/images/products/ridge-baggy-denim.jpg" },
+      { label: "Front", ratio: "3:4", image: "/images/products/ridge-baggy-denim.webp" },
+      { label: "Back", ratio: "3:4", image: "/images/products/ridge-baggy-denim.webp" },
+      { label: "Hem", ratio: "1:1", image: "/images/products/ridge-baggy-denim.webp" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/ridge-baggy-denim.webp" },
     ],
     summary:
       "A wide five-pocket in rigid denim, stone washed to a flat mid tone with no whiskering at the hip.",
@@ -1116,10 +1116,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L", "XL"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5", image: "/images/products/onda-fleece-half-zip.jpg" },
-      { label: "Collar", ratio: "4:5", image: "/images/products/onda-fleece-half-zip.jpg" },
-      { label: "Zip", ratio: "1:1", image: "/images/products/onda-fleece-half-zip.jpg" },
-      { label: "Fabric", ratio: "1:1", image: "/images/products/onda-fleece-half-zip.jpg" },
+      { label: "Front", ratio: "4:5", image: "/images/products/onda-fleece-half-zip.webp" },
+      { label: "Collar", ratio: "4:5", image: "/images/products/onda-fleece-half-zip.webp" },
+      { label: "Zip", ratio: "1:1", image: "/images/products/onda-fleece-half-zip.webp" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/onda-fleece-half-zip.webp" },
     ],
     summary:
       "A deep half-zip in recycled polar fleece with a bound collar that stands without a wire.",
@@ -1159,10 +1159,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "M", "L"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "/images/products/kite-parachute-pant.jpg" },
-      { label: "Cinched", ratio: "3:4", image: "/images/products/kite-parachute-pant.jpg" },
-      { label: "Toggle", ratio: "1:1", image: "/images/products/kite-parachute-pant.jpg" },
-      { label: "Fabric", ratio: "1:1", image: "/images/products/kite-parachute-pant.jpg" },
+      { label: "Front", ratio: "3:4", image: "/images/products/kite-parachute-pant.webp" },
+      { label: "Cinched", ratio: "3:4", image: "/images/products/kite-parachute-pant.webp" },
+      { label: "Toggle", ratio: "1:1", image: "/images/products/kite-parachute-pant.webp" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/kite-parachute-pant.webp" },
     ],
     summary:
       "A parachute pant in light taffeta with cord channels at the knee and hem, so the volume can be pulled in or left to fall.",
@@ -1202,10 +1202,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "M", "L", "XL"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5", image: "/images/products/static-boxy-sweat.jpg" },
-      { label: "Back", ratio: "4:5", image: "/images/products/static-boxy-sweat.jpg" },
-      { label: "Rib", ratio: "1:1", image: "/images/products/static-boxy-sweat.jpg" },
-      { label: "Fabric", ratio: "1:1", image: "/images/products/static-boxy-sweat.jpg" },
+      { label: "Front", ratio: "4:5", image: "/images/products/static-boxy-sweat.webp" },
+      { label: "Back", ratio: "4:5", image: "/images/products/static-boxy-sweat.webp" },
+      { label: "Rib", ratio: "1:1", image: "/images/products/static-boxy-sweat.webp" },
+      { label: "Fabric", ratio: "1:1", image: "/images/products/static-boxy-sweat.webp" },
     ],
     summary:
       "A square crew sweat with set-in sleeves and a wide rib at the hem that stops the body from riding up.",
@@ -1245,10 +1245,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["S", "M", "L"], APPAREL),
     ratio: "3:4",
     gallery: [
-      { label: "Front", ratio: "3:4", image: "/images/products/dune-corduroy-shacket.jpg" },
-      { label: "Open", ratio: "3:4", image: "/images/products/dune-corduroy-shacket.jpg" },
-      { label: "Wale", ratio: "1:1", image: "/images/products/dune-corduroy-shacket.jpg" },
-      { label: "Lining", ratio: "1:1", image: "/images/products/dune-corduroy-shacket.jpg" },
+      { label: "Front", ratio: "3:4", image: "/images/products/dune-corduroy-shacket.webp" },
+      { label: "Open", ratio: "3:4", image: "/images/products/dune-corduroy-shacket.webp" },
+      { label: "Wale", ratio: "1:1", image: "/images/products/dune-corduroy-shacket.webp" },
+      { label: "Lining", ratio: "1:1", image: "/images/products/dune-corduroy-shacket.webp" },
     ],
     summary:
       "An unlined shacket in eight-wale corduroy with a flannel-backed yoke and horn-look buttons.",
@@ -1288,10 +1288,10 @@ export const PRODUCTS: ReadonlyArray<Product> = [
     sizes: allSizes(["XS", "S", "L", "XL"], APPAREL),
     ratio: "4:5",
     gallery: [
-      { label: "Front", ratio: "4:5", image: "/images/products/pilot-mesh-layer.jpg" },
-      { label: "Detail", ratio: "4:5", image: "/images/products/pilot-mesh-layer.jpg" },
-      { label: "Mesh", ratio: "1:1", image: "/images/products/pilot-mesh-layer.jpg" },
-      { label: "Hem", ratio: "1:1", image: "/images/products/pilot-mesh-layer.jpg" },
+      { label: "Front", ratio: "4:5", image: "/images/products/pilot-mesh-layer.webp" },
+      { label: "Detail", ratio: "4:5", image: "/images/products/pilot-mesh-layer.webp" },
+      { label: "Mesh", ratio: "1:1", image: "/images/products/pilot-mesh-layer.webp" },
+      { label: "Hem", ratio: "1:1", image: "/images/products/pilot-mesh-layer.webp" },
     ],
     summary:
       "A long-sleeved open mesh worn as a layer under jersey. Knitted flat so the openings keep their grid.",

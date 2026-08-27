@@ -36,7 +36,7 @@ const mono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://modasquare.example"),
+  metadataBase: new URL("https://modasquare.com"),
   title: {
     default: "Modasquare",
     // Every route sets its own title, so the tab always names the current view.
@@ -49,6 +49,33 @@ export const metadata: Metadata = {
     description:
       "Structured outerwear, column tailoring and heavyweight jersey, cut for volume and made in small runs.",
     type: "website",
+    siteName: "Modasquare",
+    locale: "en_US",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Modasquare - Atelier Fashion",
+      },
+      {
+        url: "/logo-square.png",
+        width: 600,
+        height: 600,
+        alt: "Modasquare Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Modasquare",
+    description:
+      "Structured outerwear, column tailoring and heavyweight jersey, cut for volume and made in small runs.",
+    images: ["/og-image.png"],
+  },
+  icons: {
+    icon: "/logo-square.png",
+    apple: "/logo-square.png",
   },
 };
 
