@@ -34,10 +34,10 @@ export function QuantityStepper({
 
   const control =
     "flex h-full min-h-11 w-11 shrink-0 items-center justify-center text-[var(--color-muted)] " +
-    "transition-[color,background-color] duration-200 [transition-timing-function:var(--ease-quiet)] " +
-    "hover:bg-[var(--color-wireframe)] hover:text-[var(--color-ink)] " +
+    "transition-all duration-200 [transition-timing-function:var(--ease-spring)] " +
+    "hover:bg-[var(--color-surface)] hover:text-[var(--color-ink)] hover:scale-105 active:scale-95 " +
     "disabled:cursor-not-allowed disabled:text-[var(--color-muted)] disabled:opacity-45 " +
-    "disabled:hover:bg-transparent";
+    "disabled:hover:bg-transparent disabled:hover:scale-100";
 
   return (
     <div

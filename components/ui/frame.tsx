@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 import { cn } from "@/lib/cn";
 import type { AspectRatio } from "@/lib/catalog";
 
@@ -7,7 +10,7 @@ import type { AspectRatio } from "@/lib/catalog";
  *
  * Supports high-resolution photography with exact aspect-ratio reservation to
  * prevent layout shift (CLS: 0), with architectural wireframe fallback when
- * photography is not supplied.
+ * photography is not supplied or fails to load.
  */
 
 const RATIO_VALUE: Record<AspectRatio, string> = {
@@ -50,9 +53,20 @@ export function Frame({
   priority = false,
   sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
 }: FrameProps) {
+  const [hasError, setHasError] = useState(false);
+
+  // Normalize image path to handle subpath / basePath configurations
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+  const resolvedSrc =
+    image && image.startsWith("/") && !image.startsWith("//") && basePath
+      ? `${basePath}${image}`
+      : image;
+
+  const showImage = Boolean(resolvedSrc) && !hasError;
+
   return (
     <div
-      aria-hidden={image ? undefined : "true"}
+      aria-hidden={showImage ? undefined : "true"}
       className={cn(
         "relative isolate w-full overflow-hidden rounded-[2px] border border-[var(--color-hairline)]",
         tone === "field" ? "bg-[var(--color-wireframe)]" : "bg-[var(--color-surface)]",
@@ -60,13 +74,14 @@ export function Frame({
       )}
       style={{ aspectRatio: RATIO_VALUE[ratio] }}
     >
-      {image ? (
+      {showImage ? (
         <Image
-          src={image}
+          src={resolvedSrc!}
           alt={alt ?? label}
           fill
           priority={priority}
           sizes={sizes}
+          onError={() => setHasError(true)}
           className="object-cover object-center transition-transform duration-700 [transition-timing-function:var(--ease-spring)]"
         />
       ) : (

@@ -102,12 +102,12 @@ export function CartDrawer() {
                 aria-label="Close bag"
                 data-testid="cart-close"
                 className={
-                  "-mr-2 flex h-11 w-11 shrink-0 items-center justify-center text-[var(--color-muted)] " +
-                  "transition-colors duration-200 [transition-timing-function:var(--ease-quiet)] " +
-                  "hover:text-[var(--color-ink)]"
+                  "-mr-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-[2px] text-[var(--color-muted)] " +
+                  "transition-all duration-200 [transition-timing-function:var(--ease-spring)] " +
+                  "hover:bg-[var(--color-surface)] hover:text-[var(--color-ink)] hover:scale-105 active:scale-95"
                 }
               >
-                <X aria-hidden="true" weight="light" size={20} />
+                <X aria-hidden="true" weight="light" size={20} className="transition-transform duration-200 [transition-timing-function:var(--ease-spring)] hover:rotate-90" />
               </button>
             </header>
 
@@ -171,9 +171,9 @@ export function CartDrawer() {
                             className={
                               "min-h-[44px] px-1 text-[12px] uppercase tracking-[0.12em] " +
                               "text-[var(--color-muted)] underline decoration-[var(--color-hairline-strong)] " +
-                              "underline-offset-4 transition-colors duration-200 " +
-                              "[transition-timing-function:var(--ease-quiet)] hover:text-[var(--color-ink)] " +
-                              "hover:decoration-current"
+                              "underline-offset-4 transition-all duration-200 " +
+                              "[transition-timing-function:var(--ease-spring)] hover:text-[var(--color-ink)] " +
+                              "hover:decoration-current hover:tracking-[0.15em] active:scale-95"
                             }
                           >
                             Remove
@@ -200,7 +200,7 @@ export function CartDrawer() {
                   <button
                     type="button"
                     onClick={restoreLine}
-                    className="shrink-0 text-[12px] uppercase tracking-[0.12em] text-[var(--color-ink)] underline underline-offset-4"
+                    className="shrink-0 text-[12px] uppercase tracking-[0.12em] text-[var(--color-ink)] underline underline-offset-4 transition-all duration-200 [transition-timing-function:var(--ease-spring)] hover:tracking-[0.16em] active:scale-95"
                   >
                     Undo
                   </button>
@@ -231,10 +231,14 @@ export function CartDrawer() {
                   type="button"
                   data-testid="checkout-button"
                   className={
-                    "mt-4 flex min-h-[48px] w-full items-center justify-center rounded-[2px] " +
-                    "bg-[var(--color-ink)] px-6 text-[13px] font-semibold uppercase tracking-[0.14em] " +
-                    "text-[var(--color-canvas)] transition-opacity duration-200 " +
-                    "[transition-timing-function:var(--ease-quiet)] hover:opacity-90"
+                    "group relative mt-4 flex min-h-[50px] w-full items-center justify-center gap-2 rounded-[2px] " +
+                    "border border-[var(--color-ink)] bg-[var(--color-ink)] px-6 text-[13px] font-semibold uppercase tracking-[0.14em] " +
+                    "text-[var(--color-canvas)] shadow-[0_2px_8px_rgba(0,0,0,0.08)] " +
+                    "transition-[transform,background-color,color,border-color,box-shadow,letter-spacing] duration-300 " +
+                    "[transition-timing-function:var(--ease-spring)] " +
+                    "hover:-translate-y-0.5 hover:bg-[var(--color-ink-tint)] hover:border-[var(--color-ink-tint)] " +
+                    "hover:shadow-[0_8px_24px_rgba(18,18,20,0.22)] hover:tracking-[0.16em] " +
+                    "active:translate-y-0 active:scale-[0.985] active:shadow-[0_2px_6px_rgba(0,0,0,0.12)]"
                   }
                 >
                   Proceed to checkout
@@ -243,7 +247,14 @@ export function CartDrawer() {
                 <button
                   type="button"
                   onClick={closeDrawer}
-                  className="mt-3 min-h-[44px] w-full text-[12px] uppercase tracking-[0.12em] text-[var(--color-muted)] transition-colors duration-200 hover:text-[var(--color-ink)]"
+                  className={
+                    "mt-2.5 flex min-h-[44px] w-full items-center justify-center rounded-[2px] border border-transparent " +
+                    "text-[12px] font-medium uppercase tracking-[0.14em] text-[var(--color-muted)] " +
+                    "transition-[color,background-color,border-color,transform,letter-spacing] duration-200 " +
+                    "[transition-timing-function:var(--ease-spring)] " +
+                    "hover:border-[var(--color-hairline-strong)] hover:bg-[var(--color-surface)] hover:text-[var(--color-ink)] " +
+                    "hover:tracking-[0.16em] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99]"
+                  }
                 >
                   Continue shopping
                 </button>
@@ -299,9 +310,10 @@ function EmptyBag({ onClose }: { readonly onClose: () => void }) {
         className={
           "inline-flex min-h-[44px] items-center justify-center rounded-[2px] border " +
           "border-[var(--color-ink)] px-8 text-[13px] font-semibold uppercase tracking-[0.14em] " +
-          "text-[var(--color-ink)] transition-colors duration-200 " +
-          "[transition-timing-function:var(--ease-quiet)] hover:bg-[var(--color-ink)] " +
-          "hover:text-[var(--color-canvas)]"
+          "text-[var(--color-ink)] shadow-[0_1px_4px_rgba(0,0,0,0.04)] " +
+          "transition-[background-color,color,transform,box-shadow,letter-spacing] duration-300 " +
+          "[transition-timing-function:var(--ease-spring)] hover:-translate-y-0.5 hover:bg-[var(--color-ink)] " +
+          "hover:text-[var(--color-canvas)] hover:shadow-[0_6px_20px_rgba(18,18,20,0.14)] hover:tracking-[0.16em] active:translate-y-0 active:scale-95"
         }
       >
         Browse

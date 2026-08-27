@@ -15,20 +15,22 @@ type Size = "md" | "lg";
 
 const BASE =
   "inline-flex items-center justify-center gap-2 rounded-[2px] font-sans font-semibold uppercase " +
-  "whitespace-nowrap transition-[background-color,color,border-color,transform] duration-200 " +
-  "[transition-timing-function:var(--ease-quiet)] active:scale-[0.985] " +
-  "disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100";
+  "whitespace-nowrap cursor-pointer " +
+  "transition-[background-color,color,border-color,transform,box-shadow,letter-spacing] duration-300 " +
+  "[transition-timing-function:var(--ease-spring)] " +
+  "hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.985] " +
+  "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:active:scale-100";
 
 const VARIANT: Record<Variant, string> = {
   primary:
-    "bg-[var(--color-ink)] text-[var(--color-canvas)] border border-[var(--color-ink)] " +
-    "hover:bg-[var(--color-ink-tint)] hover:border-[var(--color-ink-tint)]",
+    "bg-[var(--color-ink)] text-[var(--color-canvas)] border border-[var(--color-ink)] shadow-[0_2px_8px_rgba(0,0,0,0.08)] " +
+    "hover:bg-[var(--color-ink-tint)] hover:border-[var(--color-ink-tint)] hover:shadow-[0_8px_24px_rgba(18,18,20,0.2)] hover:tracking-[0.15em]",
   secondary:
-    "bg-transparent text-[var(--color-ink)] border border-[var(--color-ink)] " +
-    "hover:bg-[var(--color-ink)] hover:text-[var(--color-canvas)]",
+    "bg-transparent text-[var(--color-ink)] border border-[var(--color-ink)] shadow-[0_1px_4px_rgba(0,0,0,0.04)] " +
+    "hover:bg-[var(--color-ink)] hover:text-[var(--color-canvas)] hover:shadow-[0_6px_20px_rgba(18,18,20,0.12)] hover:tracking-[0.15em]",
   ghost:
     "bg-transparent text-[var(--color-muted)] border border-transparent " +
-    "hover:text-[var(--color-ink)] hover:border-[var(--color-hairline-strong)]",
+    "hover:text-[var(--color-ink)] hover:bg-[var(--color-surface)] hover:border-[var(--color-hairline-strong)] hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)]",
 };
 
 /* Minimum 44px tall so the target clears the mobile guidance in AGENTS.md. */

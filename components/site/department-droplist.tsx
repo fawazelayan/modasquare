@@ -99,12 +99,18 @@ export function DepartmentDroplist({ className }: DepartmentDroplistProps) {
         onClick={() => setIsOpen((prev) => !prev)}
         data-testid="departments-trigger"
         className={cn(
-          "relative flex h-11 w-11 items-center justify-center rounded-[2px] text-[var(--color-ink)]",
-          "transition-transform duration-150 active:scale-95",
-          isOpen && "text-[var(--color-ink)]",
+          "group relative flex h-11 w-11 items-center justify-center rounded-[2px] text-[var(--color-ink)]",
+          "transition-all duration-200 [transition-timing-function:var(--ease-spring)]",
+          "hover:bg-[var(--color-surface)] hover:scale-105 active:scale-95",
+          isOpen && "bg-[var(--color-surface)]",
         )}
       >
-        <List aria-hidden="true" weight="bold" size={26} />
+        <List
+          aria-hidden="true"
+          weight="bold"
+          size={26}
+          className="transition-transform duration-200 [transition-timing-function:var(--ease-spring)] group-hover:scale-105"
+        />
       </button>
 
       {/* ---------------------------------------------------- Pure Tree Structure Pop-up Menu */}

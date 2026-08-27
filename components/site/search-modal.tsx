@@ -91,9 +91,9 @@ export function SearchModal({
                   onClick={onClose}
                   aria-label="Close search"
                   data-testid="search-close"
-                  className="-mr-2 flex h-11 w-11 items-center justify-center text-[var(--color-muted)] transition-colors duration-200 hover:text-[var(--color-ink)]"
+                  className="-mr-2 flex h-11 w-11 items-center justify-center rounded-[2px] text-[var(--color-muted)] transition-all duration-200 [transition-timing-function:var(--ease-spring)] hover:bg-[var(--color-surface)] hover:text-[var(--color-ink)] hover:scale-105 active:scale-95"
                 >
-                  <X aria-hidden="true" weight="light" size={20} />
+                  <X aria-hidden="true" weight="light" size={20} className="transition-transform duration-200 [transition-timing-function:var(--ease-spring)] hover:rotate-90" />
                 </button>
               </div>
 

@@ -148,6 +148,21 @@
     font-size: max(16px, 1rem);
   }
 
+  /* Ensure all interactive buttons, triggers and inputs show the pointing hand cursor */
+  button,
+  [role="button"],
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"],
+  summary {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [role="button"][aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
   ::selection {
     background-color: color-mix(in oklab, var(--color-accent) 22%, transparent);
     color: var(--color-ink);
